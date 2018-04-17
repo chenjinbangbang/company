@@ -1,0 +1,52 @@
+/* pages/details/details.wxss */
+
+.slide-image {
+  width:100%;
+}
+
+.details {
+}
+
+.details .price {
+  height: 100rpx;
+  line-height: 100rpx;
+}
+
+.details .price .price1 {
+  font-size: 46rpx;
+  color: #f00;
+  font-weight: bold;
+  margin: 0 20rpx;
+}
+
+.details .price .price2 {
+  font-size: 32rpx;
+}
+
+.details .title {
+  height: 80rpx;
+  line-height: 80rpx;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  font-weight:bold;
+  padding-left:20rpx;
+  font-size:36rpx;
+}
+
+.details .content {
+  display:inline-block;
+  font-size:30rpx;
+  padding:20rpx;
+  font-size:32rpx;
+}
+
+.contact{
+  position:fixed;
+  width:100%;
+  bottom:0;
+  background-color:#00FF66;
+}
+.contact view{ color:#fff; display:inline; position:relative;}
+.contact view image{ width:55rpx; height:55rpx; position:absolute; left:-100rpx; top:0;}
+
+

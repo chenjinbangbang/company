@@ -1,0 +1,24 @@
+<!--pages/details/details.wxml-->
+<swiper autoplay='true' interval='2000' duration='500' indicator-dots='true' indicator-color='#ccc' indicator-active-color='#fff'>
+  <block wx:for='{{details.imgUrls}}' wx:key='*this'>
+    <swiper-item>
+      <image src='{{item}}' class='slide-image' mode='aspectFill'></image>
+    </swiper-item>
+  </block> 
+</swiper>
+
+<view class='details'>
+  <view class='price'>
+    <text class='price1'>{{details.price}}</text>
+    <text class='price2'>{{details.price_original}}</text>
+  </view>
+  <view class='title'>{{details.title}}</view>
+  <text class='content'>{{details.content}}</text>  
+</view>
+
+<button class='contact' bindtap='phoneCall'>
+  <view>
+    <image src='/images/phone.png' mode='aspectFill'></image>
+    <text>联系我们</text>
+  </view>
+</button>

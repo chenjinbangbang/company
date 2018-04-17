@@ -1,0 +1,10 @@
+<!--pages/articles/articles.wxml-->
+<view class='articles' wx:for='{{lists}}' wx:key="*this" data-id='{{item.id}}' bindtap='details'>
+  <view class='articles-img'>
+    <image src="{{item.img}}" mode="aspectFill"></image>
+  </view>
+  <view class='articles-detail'>
+    <view class='title'>{{item.title}}</view>
+    <view class='price'>{{item.price}}</view>
+  </view>
+</view>
