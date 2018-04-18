@@ -8,7 +8,11 @@
             <span>{{dataForm['id']}}</span>
           </el-form-item>
           <el-form-item label="详情：" prop="content">
-            <el-input v-model="dataForm.content"></el-input>
+            <!-- <el-input v-model="dataForm.content"></el-input> -->
+            <div>
+              <tinymce :height="300" v-model="dataForm.content"></tinymce>
+            </div>
+            <div class="editor-content" v-html="dataForm.content"></div>
           </el-form-item>
 
           <el-form-item>
@@ -46,44 +50,18 @@
   </div>
 </template>
 
-<style lang='scss'>
-.classify {
-  .iconImg {
-    width: 30px;
-  }
-  .icon {
-    width: 150px;
-    height: 150px;
-    border: 1px solid #eee;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    &:hover {
-      border: 1px solid #ddd;
-    }
-    i {
-      font-size: 30px;
-    }
-    img {
-      max-width: 100%;
-      max-height: 100%;
-    }
-  }
-}
-</style>
-
 <script>
 import { getLists, create, getInfo, update, deletes } from "@/api/article";
+import Tinymce from '@/components/Tinymce'
 export default {
   name: "classify",
-  components: {},
+  components: {Tinymce},
   data() {
     return {
       //表格数据
       tableLists: [],
       //表单数据
-      dataForm: { id: null, content: "我的详情我的详情我的详情"},
+      dataForm: { id: null, content: "我的详情我的详情我的详情" },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
@@ -259,3 +237,31 @@ export default {
   }
 };
 </script>
+
+
+<style lang='scss'>
+.classify {
+  .iconImg {
+    width: 30px;
+  }
+  .icon {
+    width: 150px;
+    height: 150px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      border: 1px solid #ddd;
+    }
+    i {
+      font-size: 30px;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
+</style>
