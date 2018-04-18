@@ -7,7 +7,24 @@ Page({
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+
+    lists: [
+      // {
+      //   id: 1,
+      //   name: "办公地址租赁",
+      //   icon: "/server/public/images/icon1.png",
+      //   create_time: "2018-04-17T14:37:51.000Z",
+      //   update_time: "2018-04-18T08:03:01.000Z"
+      // },
+      // {
+      //   id: 2,
+      //   name: "办公地址挂靠",
+      //   icon: "/server/public/images/icon2.png",
+      //   create_time: "2018-04-17T14:38:21.000Z",
+      //   update_time: "2018-04-18T15:31:22.000Z"
+      // }
+    ]
   },
   //事件处理函数
   bindViewTap: function() {
@@ -16,6 +33,8 @@ Page({
     })
   },
   onLoad: function () {
+    this.getLists();
+
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -50,5 +69,23 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  //获取分类列表
+  getLists(){
+    let self = this;
+    wx.request({
+      url: 'http://123.207.246.238:3001/api/classify/list',
+      method: 'get',
+      success(res){
+        res = res.data;
+        if(res.error_code === 0){
+          self.setData({
+            lists: res.data.results
+          });
+          console.log(self.data.lists);
+        }
+        
+      }
+    });
   }
 })

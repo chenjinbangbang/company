@@ -9,10 +9,10 @@
           </el-form-item>
           <el-form-item label="详情：" prop="content">
             <!-- <el-input v-model="dataForm.content"></el-input> -->
-            <div>
+            <!--<div>
               <tinymce :height="300" v-model="dataForm.content"></tinymce>
             </div>
-            <div class="editor-content" v-html="dataForm.content"></div>
+            <div class="editor-content" v-html="dataForm.content"></div>-->
           </el-form-item>
 
           <el-form-item>
@@ -52,10 +52,10 @@
 
 <script>
 import { getLists, create, getInfo, update, deletes } from "@/api/article";
-import Tinymce from '@/components/Tinymce'
+//import Tinymce from '@/components/Tinymce'
 export default {
   name: "classify",
-  components: {Tinymce},
+  //components: {Tinymce},
   data() {
     return {
       //表格数据

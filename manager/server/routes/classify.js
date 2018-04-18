@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 let Storage = multer.diskStorage({
   destination(req,file,callback){
-    callback(null,'./static/img');
+    callback(null,'./server/public/images');
   },
   filename(req,file,callback){
     callback(null,`${file.fieldname}_${Date.now()}_${file.originalname}`);
@@ -49,7 +49,7 @@ router.get('/list',(req,res) => {
 router.post('/create',upload.single('file'),(req,res) => {
   //console.log(file);
 
-  let url = `/static/img/${req.file.filename}`;
+  let url = `/server/public/images/${req.file.filename}`;
   let sql = `insert into classifys (name,icon,create_time,update_time) values ('${req.body.name}','${url}',now(),now())`;
 
   connection.query(sql,(err,result) => {
@@ -98,13 +98,13 @@ router.post('/update',upload.single('file'),(req,res) => {
   //判断是否有文件更新
   let sql;
   if(req.file){ //有文件更新
-    let url = `/static/img/${req.file.filename}`;
+    let url = `/server/public/images/${req.file.filename}`;
     sql = `update classifys set name = '${req.body.name}',icon = '${url}',update_time = now() where id = ${req.body.id}`;
   }else{ //没有文件更新，icon不用更新
     sql = `update classifys set name = '${req.body.name}',update_time = now() where id = ${req.body.id}`;
   }
 
-  
+
   connection.query(sql,(err,result) => {
     if(err){
       console.log(`更新分类失败：${err.message}`);

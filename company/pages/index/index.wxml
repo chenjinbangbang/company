@@ -13,12 +13,8 @@
 </view> -->
 
 <view class='home'>
-  <navigator url="/pages/articles/articles?classify=1" hover-class='navigator-hover'>
-    <image src="/images/icon1.png" mode="aspectFit"></image>
-    <text>办公地址租赁</text> 
-  </navigator>
-  <navigator url="/pages/articles/articles?classify=2" hover-class='navigator-hover'>
-    <image src="/images/icon2.png" mode="aspectFit"></image>
-    <text>办公地址挂靠</text> 
+  <navigator url="/pages/articles/articles?id={{item.id}}" hover-class='navigator-hover' wx:for='{{lists}}' wx:key='*this'>
+    <image src="http://123.207.246.238:82{{item.icon}}" mode="aspectFit"></image>
+    <text>{{item.name}}</text> 
   </navigator>
 </view>

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.47, for Win32 (x86)
+-- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: company
 -- ------------------------------------------------------
--- Server version	5.5.47
+-- Server version	5.1.73
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -67,7 +67,7 @@ CREATE TABLE `articles` (
 
 LOCK TABLES `articles` WRITE;
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
-INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,'m²/月','[\"/static/img/articleImg1.png\"]','<h2>我的详情</h2>','2018-04-18 16:20:32','2018-04-18 16:20:28'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,'m²/月','[\"/static/img/articleImg2.png\"]','<h2>我的详情</h2>','2018-04-18 16:20:39','2018-04-18 16:20:36');
+INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,'m²/月','/server/public/images/articleImg1.png,/server/public/images/articleImg2.png','<h2>我的详情</h2>','2018-04-18 16:20:32','2018-04-18 16:20:28'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,'m²/月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','<h2>我的详情</h2>','2018-04-18 16:20:39','2018-04-18 16:20:36');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +85,7 @@ CREATE TABLE `classifys` (
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +94,7 @@ CREATE TABLE `classifys` (
 
 LOCK TABLES `classifys` WRITE;
 /*!40000 ALTER TABLE `classifys` DISABLE KEYS */;
-INSERT INTO `classifys` VALUES (1,'办公地址租赁','/static/img/icon1.png','2018-04-17 22:37:51','2018-04-18 16:03:01'),(2,'办公地址挂靠','/static/img/icon2.png','2018-04-17 22:38:21','2018-04-18 16:10:26');
+INSERT INTO `classifys` VALUES (1,'办公地址租赁','/server/public/images/icon1.png','2018-04-17 22:37:51','2018-04-18 16:03:01'),(2,'办公地址挂靠','/server/public/images/icon2.png','2018-04-17 22:38:21','2018-04-18 23:31:22');
 /*!40000 ALTER TABLE `classifys` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -107,4 +107,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-18 17:57:00
+-- Dump completed on 2018-04-19  1:11:41

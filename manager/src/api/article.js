@@ -1,5 +1,4 @@
 import request from '@/utils/request';
-import md5 from 'js-md5';
 
 //获取分类列表
 export function getLists() {
