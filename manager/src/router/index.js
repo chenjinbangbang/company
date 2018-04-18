@@ -5,6 +5,7 @@ import { getUsername } from '@/utils/auth';
 import login from '@/views/login';
 import home from '@/views/home';
 import classify from '@/views/classify';
+import article from '@/views/article';
 
 Vue.use(Router);
 
@@ -17,6 +18,7 @@ let router =  new Router({
       component: home,
       children: [
         { path: '',name: 'classify',component: classify },
+        { path: 'article',name: 'article',component: article },
       ]
     },
     {

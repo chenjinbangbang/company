@@ -36,7 +36,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES (1,'admin','123456');
+INSERT INTO `admins` VALUES (1,'admin','e10adc3949ba59abbe56e057f20f883e');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -48,16 +48,17 @@ DROP TABLE IF EXISTS `articles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `articles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `classify` varchar(20) DEFAULT NULL,
-  `classify_icon` varchar(100) DEFAULT NULL,
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `uid` int(20) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `price` double(10,2) DEFAULT NULL,
   `unit` varchar(20) DEFAULT NULL,
   `images` varchar(500) DEFAULT NULL,
   `content` mediumtext,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,8 +67,35 @@ CREATE TABLE `articles` (
 
 LOCK TABLES `articles` WRITE;
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
-INSERT INTO `articles` VALUES (1,'办公地址租赁','/images/icon/1.jpg','广州白云区，新市，公寓式办公，1000方',33.50,'m²/月','[\"/images/article/1.jpg\"]','<h2>我的详情</h2>'),(2,'办公地址挂靠','/images/icon/2.jpg','广州番禺区，亚运城，毛坯，1200方',20.00,'m²/月','[\"/images/article/2.jpg\"]','<h2>我的详情</h2>');
+INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,'m²/月','[\"/static/img/articleImg1.png\"]','<h2>我的详情</h2>','2018-04-18 16:20:32','2018-04-18 16:20:28'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,'m²/月','[\"/static/img/articleImg2.png\"]','<h2>我的详情</h2>','2018-04-18 16:20:39','2018-04-18 16:20:36');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `classifys`
+--
+
+DROP TABLE IF EXISTS `classifys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `classifys` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `classifys`
+--
+
+LOCK TABLES `classifys` WRITE;
+/*!40000 ALTER TABLE `classifys` DISABLE KEYS */;
+INSERT INTO `classifys` VALUES (1,'办公地址租赁','/static/img/icon1.png','2018-04-17 22:37:51','2018-04-18 16:03:01'),(2,'办公地址挂靠','/static/img/icon2.png','2018-04-17 22:38:21','2018-04-18 16:10:26');
+/*!40000 ALTER TABLE `classifys` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -79,4 +107,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-17 18:03:21
+-- Dump completed on 2018-04-18 17:57:00

@@ -22,14 +22,14 @@ let upload = multer({
   storage: Storage
 });
 
-//获取分类列表
+//获取文章列表
 router.get('/list',(req,res) => {
 
-  let sql = 'select * from classifys';
+  let sql = 'select a.id,b.name,a.title,a.price,a.unit,a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id';
 
   connection.query(sql,(err,result) => {
     if(err){
-      console.log(`获取分类列表失败：${err.message}`);
+      console.log(`获取文章列表失败：${err.message}`);
       return;
     }
 
@@ -45,16 +45,16 @@ router.get('/list',(req,res) => {
   });
 });
 
-//添加分类
+//添加文章
 router.post('/create',upload.single('file'),(req,res) => {
   //console.log(file);
 
   let url = `/static/img/${req.file.filename}`;
-  let sql = `insert into classifys (name,icon,create_time,update_time) values ('${req.body.name}','${url}',now(),now())`;
+  let sql = `insert into articles (name,icon,create_time,update_time) values ('${req.body.name}','${url}',now(),now())`;
 
   connection.query(sql,(err,result) => {
     if(err){
-      console.log(`添加分类失败：${err}`);
+      console.log(`添加文章失败：${err}`);
       return;
     }
 
@@ -62,22 +62,22 @@ router.post('/create',upload.single('file'),(req,res) => {
 
     res.json({
       error_code: 0,
-      data: '添加分类成功！'
+      data: '添加文章成功！'
     });
 
   });
 
 });
 
-//获取某个分类信息
+//获取某个文章信息
 router.get('/getInfo',(req,res) => {
   let id = req.query.id;
 
-  let sql = `select * from classifys where id = ${id}`;
+  let sql = `select * from articles where id = ${id}`;
 
   connection.query(sql,(err,result) => {
     if(err){
-      console.log(`获取某个分类信息失败：${err.message}`);
+      console.log(`获取某个文章信息失败：${err.message}`);
       return;
     }
 
@@ -91,7 +91,7 @@ router.get('/getInfo',(req,res) => {
   });
 });
 
-//更新分类
+//更新文章
 router.post('/update',upload.single('file'),(req,res) => {
   console.log(req.file);
 
@@ -99,15 +99,15 @@ router.post('/update',upload.single('file'),(req,res) => {
   let sql;
   if(req.file){ //有文件更新
     let url = `/static/img/${req.file.filename}`;
-    sql = `update classifys set name = '${req.body.name}',icon = '${url}',update_time = now() where id = ${req.body.id}`;
+    sql = `update articles set name = '${req.body.name}',icon = '${url}',update_time = now() where id = ${req.body.id}`;
   }else{ //没有文件更新，icon不用更新
-    sql = `update classifys set name = '${req.body.name}',update_time = now() where id = ${req.body.id}`;
+    sql = `update articles set name = '${req.body.name}',update_time = now() where id = ${req.body.id}`;
   }
 
   
   connection.query(sql,(err,result) => {
     if(err){
-      console.log(`更新分类失败：${err.message}`);
+      console.log(`更新文章失败：${err.message}`);
       return;
     }
 
@@ -115,21 +115,21 @@ router.post('/update',upload.single('file'),(req,res) => {
 
     res.json({
       error_code: 0,
-      data: '更新分类成功！'
+      data: '更新文章成功！'
     });
 
   });
 
 });
 
-//删除分类
+//删除文章
 router.post('/delete',(req,res) => {
 
-  let sql = `delete from classifys where id = ${req.body.id}`;
+  let sql = `delete from articles where id = ${req.body.id}`;
 
   connection.query(sql,(err,result) => {
     if(err){
-      console.log(`删除分类失败：${err.message}`);
+      console.log(`删除文章失败：${err.message}`);
       return;
     }
 
@@ -137,7 +137,7 @@ router.post('/delete',(req,res) => {
 
     res.json({
       error_code: 0,
-      data: '删除分类成功！'
+      data: '删除文章成功！'
     });
 
   });

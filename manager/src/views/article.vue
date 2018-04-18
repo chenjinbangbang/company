@@ -2,23 +2,13 @@
   <div class="classify">
 
     <div class="dataForm">
-      <el-dialog :title="operate === 0 ? '添加分类' : '修改分类'" :visible.sync="visible" :closeOnClickModal="false" :beforeClose="handleClose">
+      <el-dialog :title="operate === 0 ? '添加文章' : '修改文章'" :visible.sync="visible" :closeOnClickModal="false" :beforeClose="handleClose">
         <el-form :model="dataForm" ref="dataForm" labelWidth="150px" :rules="rules">
           <el-form-item label="编号：" prop="id" v-if="operate !== 0">
             <span>{{dataForm['id']}}</span>
           </el-form-item>
-          <el-form-item label="名称：" prop="name">
-            <el-input v-model="dataForm.name"></el-input>
-          </el-form-item>
-          <!--<el-form-item label="图标：" prop="icon">
-            <el-input v-model="dataForm.icon"></el-input>
-          </el-form-item>-->
-          <el-form-item label="图标：" prop="icon">
-            <div class="icon" @click="fileClick">
-              <input type="file" ref="file" @change="fileUpload" style="display:none;">
-              <img :src="dataForm.icon" v-if="dataForm.icon" alt="">
-              <i class="el-icon-plus" v-else></i>
-            </div>
+          <el-form-item label="详情：" prop="content">
+            <el-input v-model="dataForm.content"></el-input>
           </el-form-item>
 
           <el-form-item>
@@ -30,19 +20,18 @@
     </div>
 
     <div class="title">
-      <h2>分类管理</h2>
-      <el-button type="primary" @click="addRow" size="small">添 加</el-button>
+      <h2>文章管理</h2>
+      <!-- <el-button type="primary" @click="addRow" size="small">添 加</el-button> -->
     </div>
 
     <main class="tableLists">
       <el-table :data="tableLists" stripe border @sort-change="sortChange" v-loading="loading">
         <el-table-column prop="id" label="编号" width="50"></el-table-column>
-        <el-table-column prop="name" label="名称" width="200">></el-table-column>
-        <el-table-column prop="icon" label="图标" width="100">
-          <template slot-scope="scope">
-            <img :src="scope.row.icon" alt="" class="iconImg">
-          </template>
-        </el-table-column>
+        <el-table-column prop="name" label="分类" width="100">></el-table-column>
+        <el-table-column prop="title" label="标题" width="200"></el-table-column>
+        <el-table-column prop="price" label="价格（元）" width="100"></el-table-column>
+        <el-table-column prop="unit" label="单位" width="100"></el-table-column>
+        <el-table-column prop="content" label="详情" width="200"></el-table-column>
         <el-table-column prop="create_time" label="创建时间" width="160"></el-table-column>
         <el-table-column prop="update_time" label="修改时间" width="160"></el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
@@ -85,7 +74,7 @@
 </style>
 
 <script>
-import { getLists, create, getInfo, update, deletes } from "@/api/classify";
+import { getLists, create, getInfo, update, deletes } from "@/api/article";
 export default {
   name: "classify",
   components: {},
@@ -94,7 +83,7 @@ export default {
       //表格数据
       tableLists: [],
       //表单数据
-      dataForm: { id: null, name: "我的办公室", icon: "" },
+      dataForm: { id: null, content: "我的详情我的详情我的详情"},
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
@@ -174,7 +163,7 @@ export default {
               if (res.error_code === 0) {
                 this.$notify({
                   title: "成功",
-                  message: "添加分类成功！",
+                  message: "添加文章成功！",
                   type: "success"
                 });
                 this.getTableLists();
@@ -193,7 +182,7 @@ export default {
               if (res.error_code === 0) {
                 this.$notify({
                   title: "成功",
-                  message: "更新分类成功！",
+                  message: "更新文章成功！",
                   type: "success"
                 });
                 this.getTableLists();
@@ -216,7 +205,7 @@ export default {
             if (res.error_code === 0) {
               this.$notify({
                 title: "成功",
-                message: "删除分类成功！",
+                message: "删除文章成功！",
                 type: "success"
               });
               this.getTableLists();

@@ -4,7 +4,7 @@ import md5 from 'js-md5';
 //获取分类列表
 export function getLists() {
   return request({
-    url: '/classify/list',
+    url: '/article/list',
     method: 'get'
   });
 }
@@ -18,7 +18,7 @@ export function create(data) {
   //console.log(formData.getAll('file'));
 
   return request({
-    url: '/classify/create',
+    url: '/article/create',
     method: 'post',
     data: formData,
     headers: {
@@ -30,7 +30,7 @@ export function create(data) {
 //获取某个分类信息
 export function getInfo(data) {
   return request({
-    url: '/classify/getInfo',
+    url: '/article/getInfo',
     method: 'get',
     params: data
   });
@@ -47,7 +47,7 @@ export function update(data) {
   //console.log(formData.getAll('file'));
 
   return request({
-    url: '/classify/update',
+    url: '/article/update',
     method: 'post',
     data: formData,
     headers: {
@@ -59,7 +59,7 @@ export function update(data) {
 //删除分类
 export function deletes(data) {
   return request({
-    url: '/classify/delete',
+    url: '/article/delete',
     method: 'post',
     data
   });
