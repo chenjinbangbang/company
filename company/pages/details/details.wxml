@@ -1,19 +1,22 @@
 <!--pages/details/details.wxml-->
 <swiper autoplay='true' interval='2000' duration='500' indicator-dots='true' indicator-color='#ccc' indicator-active-color='#fff'>
-  <block wx:for='{{details.imgUrls}}' wx:key='*this'>
+  <block wx:for='{{details.images}}' wx:key='*this'>
     <swiper-item>
-      <image src='{{item}}' class='slide-image' mode='aspectFill'></image>
+      <image src='http://123.207.246.238:82{{item}}' class='slide-image' mode='aspectFill'></image>
     </swiper-item>
-  </block> 
+  </block>
 </swiper>
 
 <view class='details'>
   <view class='price'>
-    <text class='price1'>{{details.price}}</text>
-    <text class='price2'>{{details.price_original}}</text>
+    <text class='price1'>￥{{details.price}}/{{details.unit_square}}m²/{{details.unit_time}}</text>
+    <text class='price2'>￥{{details.price_original}}/{{details.unit_square_original}}m²/{{details.unit_time_original}}</text>
   </view>
   <view class='title'>{{details.title}}</view>
-  <text class='content'>{{details.content}}</text>  
+  <view class='content'>
+    <import src="/wxParse/wxParse.wxml"></import>
+    <template is="wxParse" data="{{wxParseData: article.nodes}}" />
+  </view>
 </view>
 
 <button class='contact' bindtap='phoneCall'>

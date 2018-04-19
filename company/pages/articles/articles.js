@@ -94,10 +94,10 @@ Page({
   },
   //根据分类编号id，对应文章的分类编号uid来获取文章列表
   getLists(id){
-    console.log(id);
-    let self = this;
+    //console.log(id);
+    let self = this; 
     wx.request({
-      url: `http://123.207.246.238:3001/api/article/articleList?id=${id}`,
+      url: `http://localhost:3001/api/article/articleList?uid=${id}`,
       method: 'get',
       success(res){
         res = res.data;
@@ -111,7 +111,7 @@ Page({
           self.setData({
             lists: list
           });
-          console.log(self.data.lists);
+          //console.log(self.data.lists);
         }
         
       }
@@ -123,7 +123,7 @@ Page({
     //console.log(e);
     let id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '/pages/details/details?id'+id,
+      url: '/pages/details/details?id='+id,
     })
   }
 })

@@ -25,6 +25,7 @@
   margin:100rpx auto 0 auto;
   display:flex;
   justify-content:space-between;
+  flex-wrap: wrap;
 }
 .home .navigator-hover{
   background-color:#fff;
@@ -36,6 +37,7 @@
   border-radius:10px;
   text-align:center;
   font-size:30rpx;
+  margin-bottom:60rpx;
 }
 .home navigator image{
   width:180rpx;

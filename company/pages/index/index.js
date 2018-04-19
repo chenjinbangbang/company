@@ -74,7 +74,7 @@ Page({
   getLists(){
     let self = this;
     wx.request({
-      url: 'http://123.207.246.238:3001/api/classify/list',
+      url: 'http://localhost:3001/api/classify/list',
       method: 'get',
       success(res){
         res = res.data;
@@ -82,7 +82,7 @@ Page({
           self.setData({
             lists: res.data.results
           });
-          console.log(self.data.lists);
+          //console.log(self.data.lists);
         }
         
       }

@@ -25,13 +25,14 @@ let upload = multer({
 //小程序接口
 //根据分类编号id，对应文章的分类编号uid来获取文章列表
 router.get('/articleList',(req,res) => {
-  let id = req.query.id;
+  console.log(req.query);
+  let uid = req.query.uid;
 
-  let sql = `select id,title,price,unit,images from articles where uid = ${id}`;
+  let sql = `select id,title,price,unit_square,unit_time,images from articles where uid = ${uid}`;
 
   connection.query(sql,(err,result) => {
-    if(err){
-      console.log(`获取分类编号为：${id}的文章列表失败：${err.message}`);
+    if(err){ 
+      console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
       return;
     }
 
@@ -50,7 +51,7 @@ router.get('/articleList',(req,res) => {
 //获取文章列表
 router.get('/list',(req,res) => {
 
-  let sql = 'select a.id,b.name,a.title,a.price,a.unit,a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id';
+  let sql = 'select a.id,b.name,a.title,a.price,a.unit_square,a.unit_time,a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id';
 
   connection.query(sql,(err,result) => {
     if(err){

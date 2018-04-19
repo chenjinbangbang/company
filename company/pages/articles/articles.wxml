@@ -5,6 +5,6 @@
   </view>
   <view class='articles-detail'>
     <view class='title'>{{item.title}}</view>
-    <view class='price'>￥{{item.price}}/{{item.unit}}</view>
+    <view class='price'>￥{{item.price}}/{{item.unit_square}}m²/{{item.unit_time}}</view>
   </view>
 </view>

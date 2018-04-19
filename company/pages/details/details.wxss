@@ -1,4 +1,5 @@
 /* pages/details/details.wxss */
+@import "/wxParse/wxParse.wxss"; 
 
 .slide-image {
   width:100%;
@@ -21,6 +22,7 @@
 
 .details .price .price2 {
   font-size: 32rpx;
+  text-decoration: line-through;
 }
 
 .details .title {
@@ -34,10 +36,7 @@
 }
 
 .details .content {
-  display:inline-block;
-  font-size:30rpx;
   padding:20rpx;
-  font-size:32rpx;
 }
 
 .contact{

@@ -25,8 +25,9 @@ articles表：
 编号id
 分类id：uid
 标题：title（广州白云区，新市，公寓式办公，1000方）
-价格：price（33.5）
-单位：unit（m2/月）
+单价：price（33.5）
+单位（平方）：unit_square（10）
+单位（月）：unit_time(年/月/日)
 图片：images（['/images/article/1.jpg']）
 详情：content（富文本,<h2></h2>）-- 动态
 创建时间：set_time -- 动态
