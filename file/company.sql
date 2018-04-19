@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.47, for Win32 (x86)
 --
 -- Host: localhost    Database: company
 -- ------------------------------------------------------
--- Server version	5.1.73
+-- Server version	5.5.47
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -52,13 +52,17 @@ CREATE TABLE `articles` (
   `uid` int(20) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `price` double(10,2) DEFAULT NULL,
-  `unit` varchar(20) DEFAULT NULL,
+  `unit_square` int(20) DEFAULT NULL,
+  `unit_time` varchar(255) DEFAULT NULL,
   `images` varchar(500) DEFAULT NULL,
   `content` mediumtext,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+  `price_original` double(10,2) DEFAULT NULL,
+  `unit_square_original` int(20) DEFAULT NULL,
+  `unit_time_original` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +71,7 @@ CREATE TABLE `articles` (
 
 LOCK TABLES `articles` WRITE;
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
-INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,'m²/月','/server/public/images/articleImg1.png,/server/public/images/articleImg2.png','<h2>我的详情</h2>','2018-04-18 16:20:32','2018-04-18 16:20:28'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,'m²/月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','<h2>我的详情</h2>','2018-04-18 16:20:39','2018-04-18 16:20:36');
+INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,10,'月','/server/public/images/articleImg1.png,/server/public/images/articleImg2.png','<p style=\"text-align: left;\" data-mce-style=\"text-align: left;\"><span style=\"color: rgb(0, 0, 0);\" data-mce-style=\"color: #000000;\">地理位置：广州市天河区</span></p><p><span style=\"color: rgb(0, 0, 0);\" data-mce-style=\"color: #000000;\">物业费用：28元/m²/月</span></p><p><span style=\"color: rgb(0, 0, 0);\" data-mce-style=\"color: #000000;\">空调费用：暂无消息</span></p><p><span style=\"color: rgb(0, 0, 0);\" data-mce-style=\"color: #000000;\">容纳工位：114-140个</span></p>','2018-04-18 16:20:32','2018-04-20 00:46:54',15.50,10,'月'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,5,'月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','<h2>我的详情</h2>','2018-04-18 16:20:39','2018-04-18 16:20:36',10.00,5,'月'),(9,1,'深圳市',105.00,5,'月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','我的详情我的详情我的详情','2018-04-19 23:24:08','2018-04-19 23:29:14',100.00,5,'月'),(10,1,'深圳市',100.00,5,'月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','<p>我的详情我的详情我的详情</p>','2018-04-19 23:35:49','2018-04-19 23:36:11',100.00,5,'月');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-19  1:11:41
+-- Dump completed on 2018-04-20  0:54:58

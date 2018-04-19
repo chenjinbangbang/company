@@ -28,6 +28,9 @@ articles表：
 单价：price（33.5）
 单位（平方）：unit_square（10）
 单位（月）：unit_time(年/月/日)
+原单价：price（33.5）
+原单位（平方）：unit_square（10）
+原单位（月）：unit_time(年/月/日)
 图片：images（['/images/article/1.jpg']）
 详情：content（富文本,<h2></h2>）-- 动态
 创建时间：set_time -- 动态

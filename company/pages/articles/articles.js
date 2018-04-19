@@ -104,6 +104,7 @@ Page({
         if(res.error_code === 0){
 
           let list = res.data.results;
+          //console.log(list);
           list.forEach(item => {
             item.images = item.images.split(',');
           });

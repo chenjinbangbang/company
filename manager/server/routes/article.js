@@ -31,7 +31,7 @@ router.get('/articleList',(req,res) => {
   let sql = `select id,title,price,unit_square,unit_time,images from articles where uid = ${uid}`;
 
   connection.query(sql,(err,result) => {
-    if(err){ 
+    if(err){
       console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
       return;
     }
@@ -51,7 +51,7 @@ router.get('/articleList',(req,res) => {
 //获取文章列表
 router.get('/list',(req,res) => {
 
-  let sql = 'select a.id,b.name,a.title,a.price,a.unit_square,a.unit_time,a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id';
+  let sql = 'select a.id,b.name,a.title,a.price,a.unit_square,a.unit_time,a.price_original,a.unit_square_original,a.unit_time_original,a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id';
 
   connection.query(sql,(err,result) => {
     if(err){
@@ -74,9 +74,15 @@ router.get('/list',(req,res) => {
 //添加文章
 router.post('/create',upload.single('file'),(req,res) => {
   //console.log(file);
+  let params = req.body;
+  console.log(params);
 
-  let url = `/server/public/images/${req.file.filename}`;
-  let sql = `insert into articles (name,icon,create_time,update_time) values ('${req.body.name}','${url}',now(),now())`;
+  //let url = `/server/public/images/${req.file.filename}`;
+  let sql = `insert into articles (title,uid,price,unit_square,unit_time,price_original,unit_square_original,unit_time_original,content,create_time,update_time) values 
+  ('${params.title}',${params.uid},${params.price},${params.unit_square},'${params.unit_time}',
+  ${params.price_original},${params.unit_square_original},'${params.unit_time_original}','${params.content}',now(),now())`;
+
+  console.log(sql);
 
   connection.query(sql,(err,result) => {
     if(err){
@@ -119,7 +125,8 @@ router.get('/getInfo',(req,res) => {
 
 //更新文章
 router.post('/update',upload.single('file'),(req,res) => {
-  console.log(req.file);
+  //console.log(req.file);
+  let params = req.body;
 
   //判断是否有文件更新
   let sql;
@@ -127,7 +134,9 @@ router.post('/update',upload.single('file'),(req,res) => {
     let url = `/server/public/images/${req.file.filename}`;
     sql = `update articles set name = '${req.body.name}',icon = '${url}',update_time = now() where id = ${req.body.id}`;
   }else{ //没有文件更新，icon不用更新
-    sql = `update articles set name = '${req.body.name}',update_time = now() where id = ${req.body.id}`;
+    sql = `update articles set title = '${params.title}',uid = '${params.uid}',price = ${params.price},unit_square = ${params.unit_square},
+    unit_time = '${params.unit_time}',price_original = ${params.price_original},unit_square_original = ${params.unit_square_original},
+    unit_time_original = '${params.unit_time_original}',content = '${params.content}',update_time = now() where id = ${params.id}`;
   }
 
 

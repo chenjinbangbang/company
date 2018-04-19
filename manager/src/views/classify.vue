@@ -85,7 +85,7 @@
 </style>
 
 <script>
-import { getLists, create, getInfo, update, deletes } from "@/api/classify";
+import { getClassifyLists, create, getInfo, update, deletes } from "@/api/classify";
 export default {
   name: "classify",
   components: {},
@@ -103,7 +103,7 @@ export default {
       //表单验证
       rules: {
         name: [{ required: true, message: "请输入名称！", trigger: "blur" }],
-        icon: [{ required: true, message: "请输入图标！", trigger: "blur" }]
+        icon: [{ required: true, message: "请上传图标！", trigger: "blur" }]
       }
     };
   },
@@ -128,7 +128,7 @@ export default {
     /*----------------------表单数据与操作--------------------*/
     //获取表格数据
     getTableLists() {
-      getLists().then(res => {
+      getClassifyLists().then(res => {
         if (res.error_code === 0) {
           this.tableLists = res.data.results;
           //Date类型在服务器上是Object类型，返回回来的是String类型，所以必须使用new Date()转化为Object类型

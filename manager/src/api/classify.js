@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
 //获取分类列表
-export function getLists() {
+export function getClassifyLists() {
   return request({
     url: '/classify/list',
     method: 'get'

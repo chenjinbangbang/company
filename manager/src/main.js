@@ -4,6 +4,9 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 
+import axios from 'axios';
+Vue.prototype.$http = axios;
+
 //引入font-awesome
 import 'font-awesome/css/font-awesome.min.css';
 
