@@ -10,7 +10,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -18,4 +18,6 @@ export default {
   color: #2c3e50;
   height:100%;
 }
+//解决第二层modal被全屏覆盖的问题
+.v-modal{ z-index:2000 !important;}
 </style>

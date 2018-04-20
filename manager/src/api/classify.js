@@ -1,10 +1,11 @@
 import request from '@/utils/request';
 
 //获取分类列表
-export function getClassifyLists() {
+export function getClassifyLists(data) {
   return request({
     url: '/classify/list',
-    method: 'get'
+    method: 'get',
+    params: data
   });
 }
 

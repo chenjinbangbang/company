@@ -47,17 +47,25 @@
             </el-select>
           </el-form-item>
           <el-form-item label="文章图片：">
-            <el-upload action="/posts"
+            <el-upload action=""
                        list-type="picture-card"
-                       :on-remove="handleRemove"
+                       :file-list="dataForm.images"
+                       :http-request="submitUpload"
                        :on-success="handleSuccess"
+                       :on-preview="handlePictureCardPreview"
+                       :before-upload="handleBeforeUpload"
+                       :limit="5"
+                       :on-exceed="handleExceed"
+                       :on-change="handleChange"
+                       :on-remove="handleRemove"
                        :on-error="handleError"
             >
               <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip red">至少上传1张，最多上传5张图片，只能上传jpg/jpeg/png/gif格式的图片，且不超过500kb</div>
             </el-upload>
-            <!--<el-dialog :visible.sync="dialogVisible">
+            <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog>-->
+            </el-dialog>
           </el-form-item>
           <el-form-item label="文章详情："></el-form-item>
           <el-form-item prop="content" labelWidth="0">
@@ -79,10 +87,10 @@
     </div>
 
     <main class="tableLists">
-      <el-table :data="tableLists" stripe border @sort-change="sortChange" v-loading="loading">
+      <el-table :data="tableLists" stripe border v-loading="loading">
         <el-table-column prop="id" label="编号" width="50"></el-table-column>
-        <el-table-column prop="name" label="分类" width="100">></el-table-column>
-        <el-table-column prop="title" label="标题" width="200"></el-table-column>
+        <el-table-column prop="name" label="分类" width="100"></el-table-column>
+        <el-table-column prop="title" label="标题" min-width="200"></el-table-column>
         <el-table-column prop="price" label="单价" width="150">
           <template slot-scope="scope">
             <p>￥{{scope.row.price}}/{{scope.row.unit_square}}m²/{{scope.row.unit_time}}</p>
@@ -105,20 +113,40 @@
       </el-table>
     </main>
 
+    <div class="page">
+        <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="page"
+            :page-sizes="[10,20,50,100]"
+            :page-size="limit"
+            layout="total,sizes,prev,pager,next,jumper"
+            :total="total">
+        </el-pagination>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { getArticleLists, create, getInfo, update, deletes } from "@/api/article";
-import { getClassifyLists } from '@/api/classify';
-import Tinymce from '@/components/Tinymce'
+import {
+  getArticleLists,
+  create,
+  getInfo,
+  update,
+  deletes
+} from "@/api/article";
+import { getClassifyLists } from "@/api/classify";
+import Tinymce from "@/components/Tinymce";
 export default {
   name: "classify",
-  components: {Tinymce},
+  components: { Tinymce },
   data() {
     return {
-      dialogImageUrl: '', //上传图片的url预览
+      dialogImageUrl: "", //上传图片的url预览
       dialogVisible: false, //图片放大的显示与隐藏
+      imgList: [], //需要上传的图片列表
 
       //表格数据
       tableLists: [],
@@ -126,27 +154,56 @@ export default {
       //表单数据
       dataForm: {
         id: null,
-        title: '深圳市',
-        uid: 1,
-        price: 100,unit_square: 5,unit_time: '月', //单价
-        price_original: 100,unit_square_original: 5, unit_time_original: '月', //原单价
+        title: "深圳市",
+        uid: null,
+        price: 100,
+        unit_square: 5,
+        unit_time: "月", //单价
+        price_original: 100,
+        unit_square_original: 5,
+        unit_time_original: "月", //原单价
+        //images: [{name: 1, url: 'http://123.207.246.238:82/server/public/images/articleImg1.png'}],
+        images: [],
         content: "我的详情我的详情我的详情"
       },
       iconFile: "", //上传的文件
-      visible: true, //表单显示与隐藏
+      visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
       operate: 0, //判断用户是添加（0）还是修改数据（1）
       loading: true, //加载数据
+      total: 0, //总数
+      page: 1, //当前页
+      limit: 10, //一页多少条记录
       //表单验证
       rules: {
         title: { required: true, message: "请输入标题！", trigger: "blur" },
         uid: { required: true, message: "请选择分类！", trigger: "change" },
         price: { required: true, message: "请输入单价！", trigger: "blur" },
-        unit_square: { required: true, message: "请输入平方单位！", trigger: "blur" },
-        unit_time: { required: true, message: "请选择时间单位！", trigger: "change" },
-        price_original: { required: true, message: "请输入原单价！", trigger: "blur" },
-        unit_square_original: { required: true, message: "请输入原平方单位！", trigger: "blur" },
-        unit_time_original: { required: true, message: "请选择原时间单位！", trigger: "change" },
+        unit_square: {
+          required: true,
+          message: "请输入平方单位！",
+          trigger: "blur"
+        },
+        unit_time: {
+          required: true,
+          message: "请选择时间单位！",
+          trigger: "change"
+        },
+        price_original: {
+          required: true,
+          message: "请输入原单价！",
+          trigger: "blur"
+        },
+        unit_square_original: {
+          required: true,
+          message: "请输入原平方单位！",
+          trigger: "blur"
+        },
+        unit_time_original: {
+          required: true,
+          message: "请选择原时间单位！",
+          trigger: "change"
+        }
       }
     };
   },
@@ -159,57 +216,81 @@ export default {
   },
   methods: {
     //上传多张图片
-    //移除文件
-    handleRemove(file,fileList){
-      console.log(file);
-      console.log(fileList);
+    //覆盖默认的上传行为，可以自定义上传的实现（本地）
+    submitUpload(file, fileList) {
+      //console.log(fileList);
+    },
+    //文件上传成功（服务器）
+    handleSuccess(res, file, fileList) {
+      //console.log(file);
     },
     //点击已上传的文件链接
-    handlePictureCardPreview(file){
-      console.log(file);
+    handlePictureCardPreview(file) {
+      //console.log(file);
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    //文件上传成功
-    handleSuccess(res,file,fileList){
+    //上传文件之前的钩子，判断图片是否符合标准
+    handleBeforeUpload(file) {
       //console.log(file);
-      console.log(fileList);
+      if (!/jpg|jpeg|png|gif/.test(file.type)) {
+        this.$message.warning({
+          message: "只能上传jpg/jpeg/png/gif格式的图片",
+          center: true
+        });
+        return false;
+      }
+      if (file.size / 1024 > 500) {
+        this.$message.warning({ message: "图片不能大于500kb", center: true });
+        return false;
+      }
+      return true;
+    },
+    //文件超出个数限制时的钩子
+    handleExceed() {
+      this.$message.warning({
+        message: "你最多只能上传5张图片图片不能大于500kb",
+        center: true
+      });
+    },
+    //文件状态改变时的钩子，添加文件，上传成功和上传失败时都会被调用
+    handleChange(file, fileList) {
+      //console.log(fileList);
+      this.imgList = fileList;
+    },
+    //移除文件
+    handleRemove(file, fileList) {
+      //console.log(file);
+      this.imgList = fileList;
     },
     //文件上传失败
-    handleError(err,file,fileList){
-      console.log(file);
-
-      let formData = new FormData();
-      formData.append('file',file.raw);
-
-      let config = {
-        header: {
-          'Content-Type': 'multipart/form-data'
-        }
-      };
-
-      this.$http.post('/posts',formData,config).then(res => {
-        console.log(res);
-      });
+    handleError(err, file, fileList) {
+      console.log(`图片上传失败：${err}`);
     },
 
     //点击文件
-    fileClick() {
-      this.$refs.file.click();
-    },
-    //文件上传
-    fileUpload() {
-      this.iconFile = this.$refs.file.files[0];
+    // fileClick() {
+    //   this.$refs.file.click();
+    // },
+    // //文件上传
+    // fileUpload() {
+    //   this.iconFile = this.$refs.file.files[0];
 
-      const windowURL = window.URL || window.webkitUrl;
+    //   const windowURL = window.URL || window.webkitUrl;
 
-      this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
-    },
+    //   this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
+    // },
 
     /*----------------------表单数据与操作--------------------*/
     //获取表格数据
     getTableLists() {
-      getArticleLists().then(res => {
+
+      let params = {
+        page: this.page,
+        limit: this.limit
+      };
+
+      getArticleLists(params).then(res => {
         if (res.error_code === 0) {
           this.tableLists = res.data.results;
           //Date类型在服务器上是Object类型，返回回来的是String类型，所以必须使用new Date()转化为Object类型
@@ -217,16 +298,16 @@ export default {
             item.create_time = this.timeFormatFn(item.create_time);
             item.update_time = this.timeFormatFn(item.update_time);
           });
-          //this.total = res.data.total;
+          this.total = res.data.total;
 
           this.loading = false;
         }
       });
     },
     //获取分类信息
-    getClassifyLists(){
+    getClassifyLists() {
       getClassifyLists().then(res => {
-        if(res.error_code === 0){
+        if (res.error_code === 0) {
           this.classifyLists = res.data.results;
         }
       });
@@ -243,6 +324,23 @@ export default {
         if (res.error_code === 0) {
           this.dataForm = res.data;
 
+          //处理图片
+          if (this.dataForm.images) {
+            //判断是否有图片
+            let images = this.dataForm.images.split(","); //把数据库的字符串转化为数组图片
+            let img = []; //处理符合el-upload的图片规则
+            images.forEach((item, index) => {
+              img.push({
+                name: index,
+                url: item
+              });
+            });
+            this.dataForm.images = img;
+          } else {
+            this.dataForm.images = [];
+          }
+          //console.log(this.dataForm.images);
+
           this.operate = 1;
           this.visible = true;
         }
@@ -250,51 +348,92 @@ export default {
     },
     //保存数据
     saveForm() {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          if (this.operate === 0) {
-            //添加数据
-            /*let params = {
-              name: this.dataForm.name,
-              icon: this.iconFile
-            };*/
-            let params = this.dataForm;
-            //console.log(params);
-
-            create(params).then(res => {
-              if (res.error_code === 0) {
-                this.$notify({
-                  title: "成功",
-                  message: "添加文章成功！",
-                  type: "success"
-                });
-                this.getTableLists();
-                this.resetForm();
-              }
-            });
-          } else if (this.operate === 1) {
-            //更新数据
-            /*let params = {
-              id: this.dataForm.id,
-              name: this.dataForm.name,
-              icon: this.iconFile
-            };*/
+      //console.log(this.imgList);
+      //判断上传的图片是否大于0，否则提示最少上传1张图片
+      console.log(this.imgList);
+      if (this.imgList.length > 0) {
+        this.$refs.dataForm.validate(valid => {
+          if (valid) {
             let params = this.dataForm;
 
-            update(params).then(res => {
-              if (res.error_code === 0) {
-                this.$notify({
-                  title: "成功",
-                  message: "更新文章成功！",
-                  type: "success"
-                });
-                this.getTableLists();
-                this.resetForm();
-              }
-            });
+            if (this.operate === 0) {
+              //添加数据
+
+              //处理upload组件的文件列表fileList
+              let imgArray = [];
+              this.imgList.forEach(item => {
+                imgArray.push(item.raw);
+              });
+              params.images = imgArray;
+
+              create(params).then(res => {
+                if (res.error_code === 0) {
+                  this.$notify({
+                    title: "成功",
+                    message: "添加文章成功！",
+                    type: "success"
+                  });
+                  this.getTableLists();
+                  this.resetForm();
+                }
+              });
+            } else if (this.operate === 1) {
+              //更新数据
+              //console.log(this.dataForm.images);
+              console.log(this.imgList);
+
+              //处理upload组件的文件列表fileList
+              // let imgArray = [];
+              // this.imgList.forEach(item => {
+              //   if (item.status === "status") {
+              //   }
+              //   imgArray.push(item.raw);
+              // });
+              // params.images = imgArray;
+
+              //处理图片
+              let formData = new FormData();
+              formData.append("id", params.id);
+              formData.append("title", params.title);
+              formData.append("uid", params.uid);
+              formData.append("price", params.price);
+              formData.append("unit_square", params.unit_square);
+              formData.append("unit_time", params.unit_time);
+              formData.append("price_original", params.price_original);
+              formData.append(
+                "unit_square_original",
+                params.unit_square_original
+              );
+              formData.append("unit_time_original", params.unit_time_original);
+              formData.append("content", params.content);
+
+              let images = [];
+              this.imgList.forEach(item => {
+                if (item.status === "success") {
+                  formData.append("images", item.url); //原来的图片
+                } else if (item.status === "ready") {
+                  formData.append("files", item.raw); //新增或更改的图片
+                }
+              });
+              //console.log(formData.getAll("files"));
+
+              update(formData).then(res => {
+                if (res.error_code === 0) {
+                  this.$notify({
+                    title: "成功",
+                    message: "更新文章成功！",
+                    type: "success"
+                  });
+                  this.getTableLists();
+                  this.resetForm();
+                }
+              });
+            }
           }
-        }
-      });
+        });
+      } else {
+        this.$message.warning({ message: "至少上传1张图片", center: true });
+      }
     },
     //删除数据
     deleteRow(id) {
@@ -329,43 +468,31 @@ export default {
         this.$refs.dataForm.resetFields();
         this.dataForm = {
           id: null,
-          title: '',
+          title: "",
           uid: null,
-          price: 0,unit_square: 0,unit_time: '月', //单价
-          price_original: 0,unit_square_original: 0, unit_time_original: '月', //原单价
+          price: 0,
+          unit_square: 0,
+          unit_time: "月", //单价
+          price_original: 0,
+          unit_square_original: 0,
+          unit_time_original: "月", //原单价
+          images: [],
           content: ""
         };
-      }, 500);
-      this.visible = false;
-    },
-    /*----------------------排序--------------------*/
-    sortChange(obj) {
-      this.sort = obj.order;
-      this.sortField = obj.prop;
-      this.getTableLists();
-    },
-    /*----------------------搜索--------------------*/
-    //点击搜索
-    searchClick() {
-      this.limit = 10;
-      this.page = 1;
-      this.getTableLists();
+        this.visible = false;
+      }, 100);
     },
     /*----------------------分页--------------------*/
     //每页多少条数据
     handleSizeChange(val) {
       this.limit = val;
-      this.tableListsChange();
+      this.getTableLists();
     },
     //当前页
     handleCurrentChange(val) {
       this.page = val;
-      this.tableListsChange();
-    },
-    //获取当前分页表格数据
-    tableListsChange() {
       this.getTableLists();
-    }
+    },
   }
 };
 </script>
@@ -373,8 +500,13 @@ export default {
 
 <style lang='scss'>
 .classify {
-  .el-dialog{ width:80%;
-    .price{ font-size:16px;}
+  .el-dialog {
+    width: 80%;
+    .el-upload__tip {
+    }
+    .price {
+      font-size: 16px;
+    }
   }
   .iconImg {
     width: 30px;

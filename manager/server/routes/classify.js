@@ -23,11 +23,36 @@ let upload = multer({
 });
 
 //获取分类列表
-router.get('/list',(req,res) => {
+router.get('/list',async (req,res) => {
 
-  let sql = 'select * from classifys';
+  let page,limit;
+  if(req.query.page && req.query.limit){
+    page = Number(req.query.page);
+    limit = Number(req.query.limit);
+  }
+  
+  
 
-  connection.query(sql,(err,result) => {
+  //计算总数
+  let total = 0;
+  const f1 = await connection.query('select count(*) total from classifys',(err,result) => {
+    if(err){
+      console.log(`计算分类总数失败：${err.message}`);
+      return;
+    }
+    total = result[0].total;
+  });
+
+  //查询分页
+  let sql = ``;
+  if(page){ //判断是否需要分页，存在则需要分页
+    sql = `select * from classifys limit ${(page-1)*limit},${limit}`;
+  }else{
+    sql = `select * from classifys`;
+  }
+  //console.log(sql);
+
+  const f2 = await connection.query(sql,(err,result) => {
     if(err){
       console.log(`获取分类列表失败：${err.message}`);
       return;
@@ -38,7 +63,7 @@ router.get('/list',(req,res) => {
     res.json({
       error_code: 0,
       data: {
-        total: result.length,
+        total,
         results: result
       }
     });

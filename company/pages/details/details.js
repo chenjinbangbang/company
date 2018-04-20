@@ -83,7 +83,7 @@ Page({
   getDetails(id) {
     let self = this;
     wx.request({
-      url: `http://localhost:3001/api/article/getInfo?id=${id}`,
+      url: `http://www.mjpai.cn:3001/api/article/getInfo?id=${id}`,
       method: 'get',
       success(res) {
         res = res.data;

@@ -74,7 +74,7 @@ Page({
   getLists(){
     let self = this;
     wx.request({
-      url: 'http://localhost:3001/api/classify/list',
+      url: 'http://www.mjpai.cn:3001/api/classify/list',
       method: 'get',
       success(res){
         res = res.data;

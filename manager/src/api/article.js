@@ -1,29 +1,41 @@
 import request from '@/utils/request';
 
 //获取文章列表
-export function getArticleLists() {
+export function getArticleLists(data) {
   return request({
     url: '/article/list',
-    method: 'get'
+    method: 'get',
+    params: data
   });
 }
 
 //添加文章
 export function create(data) {
 
-  /*let formData = new FormData();
-  formData.append('name', data.name);
-  formData.append('file', data.icon);*/
-  //console.log(formData.getAll('file'));
+  let formData = new FormData();
+  formData.append('title', data.title);
+  formData.append('uid', data.uid);
+  formData.append('price', data.price);
+  formData.append('unit_square', data.unit_square);
+  formData.append('unit_time', data.unit_time);
+  formData.append('price_original', data.price_original);
+  formData.append('unit_square_original', data.unit_square_original);
+  formData.append('unit_time_original', data.unit_time_original);
+  formData.append('content', data.content);
+  //文件处理
+  data.images.forEach(item => {
+    formData.append('files',item);
+  });
+  console.log(formData.getAll("files"));
 
   return request({
     url: '/article/create',
     method: 'post',
-    data,
-    /*data: formData,
+    //data,
+    data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }*/
+    }
   });
 }
 
@@ -39,21 +51,14 @@ export function getInfo(data) {
 //修改文章
 export function update(data) {
 
-  /*let formData = new FormData();
-  formData.append('id', data.id);
-  formData.append('name', data.name);
-  formData.append('file', data.icon);*/
-
-  //console.log(formData.getAll('file'));
-
   return request({
     url: '/article/update',
     method: 'post',
     data,
-    /*data: formData,
+    //data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }*/
+    }
   });
 }
 
@@ -64,4 +69,33 @@ export function deletes(data) {
     method: 'post',
     data
   });
+}
+
+function objectToFormData(obj, form, namespace) {
+  const fd = form || new FormData();
+  let formKey;
+
+  for (var property in obj) {
+    if (obj.hasOwnProperty(property)) {
+      let key = Array.isArray(obj) ? '[]' : `[${property}]`;
+      if (namespace) {
+        formKey = namespace + key;
+      } else {
+        formKey = property;
+      }
+
+      // if the property is an object, but not a File, use recursivity.
+      if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
+        objectToFormData(obj[property], fd, formKey);
+      } else {
+
+        // if it's a string or a File object
+        fd.append(formKey, obj[property]);
+      }
+
+    }
+  }
+
+  return fd;
+
 }
