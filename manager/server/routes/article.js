@@ -6,7 +6,7 @@ const connection = require('../modules/mysql');
 
 //multer
 const multer = require('multer');
-const bodyParser = require('body-parser'); 
+const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
@@ -24,13 +24,24 @@ let upload = multer({
 
 //小程序接口
 //根据分类编号id，对应文章的分类编号uid来获取文章列表
-router.get('/articleList',(req,res) => {
+router.get('/articleList',async (req,res) => {
   console.log(req.query);
   let uid = req.query.uid;
+  let page = Number(req.query.page);
+  let limit = Number(req.query.limit);
 
-  let sql = `select id,title,price,unit_square,unit_time,images from articles where uid = ${uid}`;
+  //计算总数
+  let total = 0;
+  const f1 = await connection.query('select count(*) total from articles',(err,result) => {
+    if(err){
+      console.log(`计算分类编号为：${uid}的文章总数失败：${err.message}`);
+      return;
+    }
+    total = result[0].total;
+  });
 
-  connection.query(sql,(err,result) => {
+  let sql = `select id,title,price,unit_square,unit_time,images from articles where uid = ${uid} limit ${(page-1)*limit},${limit}`;
+  const f2 = await connection.query(sql,(err,result) => {
     if(err){
       console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
       return;
@@ -41,7 +52,7 @@ router.get('/articleList',(req,res) => {
     res.json({
       error_code: 0,
       data: {
-        total: result.length,
+        total,
         results: result
       }
     });
@@ -67,7 +78,7 @@ router.get('/list',async (req,res) => {
   //查询分页
   let sql = `select a.id,b.name,a.title,a.price,a.unit_square,a.unit_time,a.price_original,a.unit_square_original,a.unit_time_original,
   a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id limit ${(page-1)*limit},${limit}`;
-  const f2 = await connection.query(sql,(err,result) => { 
+  const f2 = await connection.query(sql,(err,result) => {
     if(err){
       console.log(`获取文章列表失败：${err.message}`);
       return;
@@ -168,14 +179,14 @@ router.post('/update',upload.array('files',5),(req,res) => {
       });
     }
   }
-  
+
   //处理新增或修改的图片
   req.files.forEach((item,index) => {
     imgVal.push(`/server/public/images/${item.filename}`);
   });
   console.log(imgVal);
   imgVal = imgVal.join(',');
-  
+
 
   //判断是否有文件更新
   let sql = `update articles set title = '${params.title}',uid = '${params.uid}',price = ${params.price},unit_square = ${params.unit_square},

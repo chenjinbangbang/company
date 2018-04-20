@@ -154,17 +154,17 @@ export default {
       //表单数据
       dataForm: {
         id: null,
-        title: "深圳市",
+        title: "",
         uid: null,
-        price: 100,
-        unit_square: 5,
+        price: 0,
+        unit_square: 0,
         unit_time: "月", //单价
-        price_original: 100,
-        unit_square_original: 5,
+        price_original: 0,
+        unit_square_original: 0,
         unit_time_original: "月", //原单价
         //images: [{name: 1, url: 'http://123.207.246.238:82/server/public/images/articleImg1.png'}],
         images: [],
-        content: "我的详情我的详情我的详情"
+        content: ""
       },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏

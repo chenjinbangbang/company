@@ -113,7 +113,7 @@ export default {
       //表格数据
       tableLists: [],
       //表单数据
-      dataForm: { id: null, name: "我的办公室", icon: "" },
+      dataForm: { id: null, name: "", icon: "" },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
