@@ -52,6 +52,8 @@ CREATE TABLE `articles` (
   `uid` int(20) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
   `price` double(10,2) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `is_open` tinyint(1) DEFAULT NULL,
   `unit_square` int(10) DEFAULT NULL,
   `unit_time` varchar(255) DEFAULT NULL,
   `images` varchar(500) DEFAULT NULL,
@@ -62,7 +64,7 @@ CREATE TABLE `articles` (
   `unit_square_original` int(10) DEFAULT NULL,
   `unit_time_original` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +73,7 @@ CREATE TABLE `articles` (
 
 LOCK TABLES `articles` WRITE;
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
-INSERT INTO `articles` VALUES (1,1,'广州白云区，新市，公寓式办公，1000方',33.50,10,'月','/server/public/images/articleImg1.png,/server/public/images/articleImg2.png','<p>地址位置：广州市白云区</p>','2018-04-18 16:20:32','2018-04-18 16:20:28',3.35,10,'月'),(2,2,'广州番禺区，亚运城，毛坯，1200方',20.00,5,'月','/server/public/images/articleImg2.png,/server/public/images/articleImg1.png','<p>地址位置：广州市番禺区</p>','2018-04-18 16:20:39','2018-04-20 13:52:27',2.00,5,'月'),(6,1,'深圳市',100.00,5,'月','/server/public/images/articleImg2.png,/server/public/images/files_1524207589524_4.jpg','我的详情我的详情我的详情','2018-04-20 14:06:39','2018-04-20 14:59:49',100.00,5,'月'),(7,1,'深圳市',100.00,5,'月','/server/public/images/files_1524207661062_3.jpg,,/server/public/images/files_1524207661063_4.jpg','我的详情我的详情我的详情','2018-04-20 15:01:01','2018-04-20 15:01:01',100.00,5,'月');
+INSERT INTO `articles` VALUES (12,30,'深圳市',100.00,'15915155078',1,5,'月','/server/public/images/files_1524212623913_3.jpg','我的详情我的详情我的详情','2018-04-20 16:23:43','2018-04-21 18:32:10',100.00,5,'月'),(13,30,'广州市',100.00,'15915155076',1,5,'月','/server/public/images/files_1524212645365_1.jpg,/server/public/images/files_1524305138613_1.jpg','<p>我的详情我的详情我的详情</p>','2018-04-20 16:24:05','2018-04-21 18:35:41',100.00,5,'月'),(14,30,'深圳市',100.00,'15915155079',1,5,'月','/server/public/images/files_1524212645365_1.jpg','我的详情我的详情我的详情','2018-04-20 16:24:05','2018-04-21 18:31:55',100.00,5,'月'),(15,32,'珠海市',100.00,'15915155079',1,5,'月','/server/public/images/files_1524217684170_2.jpg','我的详情我的详情我的详情','2018-04-20 17:48:04','2018-04-20 17:48:04',100.00,5,'月');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,10 +88,11 @@ CREATE TABLE `classifys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
+  `is_open` tinyint(1) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +101,7 @@ CREATE TABLE `classifys` (
 
 LOCK TABLES `classifys` WRITE;
 /*!40000 ALTER TABLE `classifys` DISABLE KEYS */;
-INSERT INTO `classifys` VALUES (1,'办公地址租赁','/server/public/images/icon1.png','2018-04-17 22:37:51','2018-04-18 16:03:01'),(2,'办公地址挂靠','/server/public/images/icon2.png','2018-04-17 22:38:21','2018-04-18 23:31:22'),(27,'我的办公室','/server/public/images/file_1524125211160_4.jpg','2018-04-19 16:06:51','2018-04-19 16:06:51'),(28,'我的办公室','/server/public/images/file_1524126224291_1.jpg','2018-04-19 16:23:44','2018-04-19 16:23:44');
+INSERT INTO `classifys` VALUES (30,'我的办公室','/server/public/images/file_1524212613527_2.jpg',0,'2018-04-20 16:23:33','2018-04-20 16:23:33'),(31,'我的办公室111','/server/public/images/file_1524212708809_2.jpg',1,'2018-04-20 16:25:08','2018-04-20 16:25:08'),(32,'tttttt','/server/public/images/file_1524212717816_icon2.png',1,'2018-04-20 16:25:17','2018-04-21 18:44:48');
 /*!40000 ALTER TABLE `classifys` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -111,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-20 15:03:53
+-- Dump completed on 2018-04-21 18:45:52

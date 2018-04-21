@@ -10,6 +10,12 @@
           <el-form-item label="标题：" prop="title">
             <el-input v-model="dataForm.title" placeholder="请输入标题"></el-input>
           </el-form-item>
+          <el-form-item label="联系电话：" prop="phone">
+            <el-input v-model="dataForm.phone" placeholder="请输入电话号码"></el-input>
+          </el-form-item>
+          <el-form-item label="是否开启：" prop="is_open">
+            <el-switch v-model="dataForm.is_open"></el-switch>
+          </el-form-item>
           <el-form-item label="分类：" prop="uid">
             <el-select v-model="dataForm.uid">
               <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -83,14 +89,26 @@
 
     <div class="title">
       <h2>文章管理</h2>
+      <div class="search">
+        <el-input v-model="search" placeholder="请输入文章标题" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
+        <el-button type="primary" size="small" @click="getTableLists" icon="el-icon-search">搜索</el-button>
+      </div>
       <el-button type="primary" @click="addRow" size="small">添 加</el-button>
     </div>
 
     <main class="tableLists">
-      <el-table :data="tableLists" stripe border v-loading="loading">
-        <el-table-column prop="id" label="编号" width="50"></el-table-column>
-        <el-table-column prop="name" label="分类" width="100"></el-table-column>
-        <el-table-column prop="title" label="标题" min-width="200"></el-table-column>
+      <el-table :data="tableLists" stripe border v-loading="loading" @sort-change="sortChange">
+        <!-- <el-table-column prop="id" label="编号" width="50"></el-table-column> -->
+        <el-table-column prop="name" label="分类" width="100" sortable="custom"></el-table-column>
+        <el-table-column prop="title" label="标题" min-width="200" sortable="custom"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" width="120" sortable="custom"></el-table-column>
+        <el-table-column prop="is_open" label="是否开启" width="120" sortable="custom">
+          <template slot-scope="scope">
+            <div @mouseover="recordId(scope.row.id)">
+              <el-switch v-model="scope.row.is_open" @change="is_openChange"></el-switch>
+            </div>
+          </template>  
+        </el-table-column>
         <el-table-column prop="price" label="单价" width="150">
           <template slot-scope="scope">
             <p>￥{{scope.row.price}}/{{scope.row.unit_square}}m²/{{scope.row.unit_time}}</p>
@@ -102,8 +120,8 @@
           </template>
         </el-table-column>
         <!--<el-table-column prop="content" label="详情" width="200"></el-table-column>-->
-        <el-table-column prop="create_time" label="创建时间" width="160"></el-table-column>
-        <el-table-column prop="update_time" label="修改时间" width="160"></el-table-column>
+        <el-table-column prop="create_time" label="创建时间" width="160" sortable="custom"></el-table-column>
+        <el-table-column prop="update_time" label="修改时间" width="160" sortable="custom"></el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template slot-scope="scope">
             <el-button type="primary" @click="editRow(scope.row['id'])" size="small">修 改</el-button>
@@ -135,7 +153,8 @@ import {
   create,
   getInfo,
   update,
-  deletes
+  deletes,
+  update_isOpen
 } from "@/api/article";
 import { getClassifyLists } from "@/api/classify";
 import Tinymce from "@/components/Tinymce";
@@ -143,12 +162,22 @@ export default {
   name: "classify",
   components: { Tinymce },
   data() {
+    //手机号码验证
+    let phoneRule = (rule, value, callback) => {
+      let valReg = /^1[34578]\d{9}$/;
+      if (!valReg.test(value)) {
+        callback(new Error('输入的电话号码格式有误！'));
+      } else {
+        callback();
+      }
+    };
     return {
       dialogImageUrl: "", //上传图片的url预览
       dialogVisible: false, //图片放大的显示与隐藏
       imgList: [], //需要上传的图片列表
 
       //表格数据
+      id: null, //记录id，开启关闭功能需要
       tableLists: [],
       classifyLists: [], //分类信息
       //表单数据
@@ -156,6 +185,8 @@ export default {
         id: null,
         title: "",
         uid: null,
+        phone: "",
+        is_open: true,
         price: 0,
         unit_square: 0,
         unit_time: "月", //单价
@@ -171,13 +202,24 @@ export default {
       editId: 0, //点击修改的是哪个id
       operate: 0, //判断用户是添加（0）还是修改数据（1）
       loading: true, //加载数据
+      //查询分页
       total: 0, //总数
       page: 1, //当前页
       limit: 10, //一页多少条记录
+      search: "", //搜索关键字
+      sort: "", //升序为ascending，降序为descending
+      sortField: "", //进行排序的字段，默认id排序
       //表单验证
       rules: {
         title: { required: true, message: "请输入标题！", trigger: "blur" },
         uid: { required: true, message: "请选择分类！", trigger: "change" },
+        phone: [
+          { required: true, message: "请选择电话号码！", trigger: "blur" },
+          {
+            validator: phoneRule,
+            trigger: "blur"
+          }
+        ],
         price: { required: true, message: "请输入单价！", trigger: "blur" },
         unit_square: {
           required: true,
@@ -268,37 +310,33 @@ export default {
       console.log(`图片上传失败：${err}`);
     },
 
-    //点击文件
-    // fileClick() {
-    //   this.$refs.file.click();
-    // },
-    // //文件上传
-    // fileUpload() {
-    //   this.iconFile = this.$refs.file.files[0];
-
-    //   const windowURL = window.URL || window.webkitUrl;
-
-    //   this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
-    // },
-
     /*----------------------表单数据与操作--------------------*/
     //获取表格数据
     getTableLists() {
-
       let params = {
+        search: this.search,
         page: this.page,
-        limit: this.limit
+        limit: this.limit,
+        sort: this.sort,
+        sortField: this.sortField
       };
 
       getArticleLists(params).then(res => {
         if (res.error_code === 0) {
           this.tableLists = res.data.results;
+          this.total = res.data.total;
+
           //Date类型在服务器上是Object类型，返回回来的是String类型，所以必须使用new Date()转化为Object类型
           this.tableLists.forEach(item => {
             item.create_time = this.timeFormatFn(item.create_time);
             item.update_time = this.timeFormatFn(item.update_time);
           });
-          this.total = res.data.total;
+
+          //开启字段处理
+          this.tableLists.forEach(item => {
+            item.is_open = item.is_open === 1 ? true : false;
+          });
+          //console.log(this.tableLists);
 
           this.loading = false;
         }
@@ -306,12 +344,47 @@ export default {
     },
     //获取分类信息
     getClassifyLists() {
-      getClassifyLists().then(res => {
+      let params = {
+        search: "",
+        page: 1,
+        limit: 1000
+      };
+      getClassifyLists(params).then(res => {
         if (res.error_code === 0) {
           this.classifyLists = res.data.results;
         }
       });
     },
+
+    //排序
+    sortChange(obj) {
+      //console.log(obj);
+      this.sort = obj.order;
+      this.sortField = obj.prop;
+      this.getTableLists();
+    },
+
+    //记录id
+    recordId(id) {
+      this.id = id;
+    },
+    //修改开启功能
+    is_openChange(val) {
+      //console.log(val);
+
+      let params = {
+        id: this.id,
+        is_open: val
+      };
+
+      update_isOpen(params).then(res => {
+        if (res.error_code === 0) {
+          //获取表格数据
+          this.getTableLists();
+        }
+      });
+    },
+
     //点击添加数据
     addRow() {
       this.visible = true;
@@ -323,6 +396,9 @@ export default {
       getInfo({ id }).then(res => {
         if (res.error_code === 0) {
           this.dataForm = res.data;
+
+          //开启字段处理
+          this.dataForm.is_open = this.dataForm.is_open === 1 ? true : false;
 
           //处理图片
           if (this.dataForm.images) {
@@ -336,8 +412,10 @@ export default {
               });
             });
             this.dataForm.images = img;
+            this.imgList = img;
           } else {
             this.dataForm.images = [];
+            this.imgList = [];
           }
           //console.log(this.dataForm.images);
 
@@ -350,7 +428,6 @@ export default {
     saveForm() {
       //console.log(this.imgList);
       //判断上传的图片是否大于0，否则提示最少上传1张图片
-      console.log(this.imgList);
       if (this.imgList.length > 0) {
         this.$refs.dataForm.validate(valid => {
           if (valid) {
@@ -380,7 +457,7 @@ export default {
             } else if (this.operate === 1) {
               //更新数据
               //console.log(this.dataForm.images);
-              console.log(this.imgList);
+              //console.log(this.imgList);
 
               //处理upload组件的文件列表fileList
               // let imgArray = [];
@@ -396,6 +473,8 @@ export default {
               formData.append("id", params.id);
               formData.append("title", params.title);
               formData.append("uid", params.uid);
+              formData.append('phone', params.phone);
+              formData.append('is_open', params.is_open);
               formData.append("price", params.price);
               formData.append("unit_square", params.unit_square);
               formData.append("unit_time", params.unit_time);
@@ -470,6 +549,8 @@ export default {
           id: null,
           title: "",
           uid: null,
+          phone: "",
+          is_open: true,
           price: 0,
           unit_square: 0,
           unit_time: "月", //单价
@@ -492,7 +573,7 @@ export default {
     handleCurrentChange(val) {
       this.page = val;
       this.getTableLists();
-    },
+    }
   }
 };
 </script>

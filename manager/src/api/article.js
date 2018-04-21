@@ -9,12 +9,23 @@ export function getArticleLists(data) {
   });
 }
 
+//修改开启功能
+export function update_isOpen(data) {
+  return request({
+    url: '/article/update_isOpen',
+    method: 'post',
+    data
+  });
+}
+
 //添加文章
 export function create(data) {
 
   let formData = new FormData();
   formData.append('title', data.title);
   formData.append('uid', data.uid);
+  formData.append('phone', data.phone);
+  formData.append('is_open', data.is_open);
   formData.append('price', data.price);
   formData.append('unit_square', data.unit_square);
   formData.append('unit_time', data.unit_time);

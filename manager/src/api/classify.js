@@ -9,12 +9,22 @@ export function getClassifyLists(data) {
   });
 }
 
+//修改开启功能
+export function update_isOpen(data) {
+  return request({
+    url: '/classify/update_isOpen',
+    method: 'post',
+    data
+  });
+}
+
 //添加分类
 export function create(data) {
 
   let formData = new FormData();
   formData.append('name', data.name);
   formData.append('file', data.icon);
+  formData.append('is_open', data.is_open);
   //console.log(formData.getAll('file'));
 
   return request({
@@ -43,6 +53,7 @@ export function update(data) {
   formData.append('id', data.id);
   formData.append('name', data.name);
   formData.append('file', data.icon);
+  formData.append('is_open', data.is_open);
 
   //console.log(formData.getAll('file'));
 
