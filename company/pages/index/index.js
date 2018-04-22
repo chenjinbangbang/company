@@ -9,6 +9,9 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
+    search: '',
+    page: 1,
+    limit: 1000,
     lists: [
       // {
       //   id: 1,
@@ -73,9 +76,11 @@ Page({
   //获取分类列表
   getLists(){
     let self = this;
+    //let data = {search: this.data.search,page: this.data.page,limit: this.data.limit};
     wx.request({
-      url: 'http://www.mjpai.cn:3001/api/classify/list',
+      url: 'http://localhost:3001/api/classify/classifyList',
       method: 'get',
+      //data,
       success(res){
         res = res.data;
         if(res.error_code === 0){

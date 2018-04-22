@@ -75,8 +75,10 @@ Page({
   },
   //联系我们，拨打电话
   phoneCall(e) {
+    console.log(e);
+    let phone = e.currentTarget.dataset.phone;
     wx.makePhoneCall({
-      phoneNumber: '13570648982'
+      phoneNumber: phone
     });
   },
   //根据文章id，获取文章详情
@@ -95,7 +97,7 @@ Page({
           self.setData({
             details: detail
           });
-          //console.log(self.data.details);
+          console.log(self.data.details);
 
           //wxParse-富文本解析组件
           let WxParse = require('../../wxParse/wxParse.js');

@@ -22,6 +22,41 @@ let upload = multer({
   storage: Storage
 });
 
+//小程序接口
+//获取分类列表
+router.get('/classifyList', async (req, res) => {
+
+  //计算总数
+  let total = 0;
+  const f1 = await connection.query(`select count(*) total from classify`, (err, result) => {
+    if (err) {
+      console.log(`计算分类总数失败：${err.message}`);
+      return;
+    }
+    total = result[0].total;
+  });
+
+  //查询分页
+  let sql = `select * from classifys where is_open = 1`;
+  //console.log(sql);
+  const f2 = await connection.query(sql, (err, result) => {
+    if (err) {
+      console.log(`获取分类列表失败：${err.message}`);
+      return;
+    }
+
+    //console.log(result);
+
+    res.json({
+      error_code: 0,
+      data: {
+        total,
+        results: result
+      }
+    });
+  });
+});
+
 //获取分类列表
 router.get('/list', async (req, res) => {
 

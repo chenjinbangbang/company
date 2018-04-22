@@ -39,13 +39,13 @@
 					"id": 0,
 					"name": "articles",
 					"pathName": "pages/articles/articles",
-					"query": "id=1"
+					"query": "id=3"
 				},
 				{
 					"id": 1,
 					"name": "details",
 					"pathName": "pages/details/details",
-					"query": "id=1"
+					"query": "id=14"
 				}
 			]
 		}

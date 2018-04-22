@@ -19,7 +19,7 @@
   </view>
 </view>
 
-<button class='contact' bindtap='phoneCall'>
+<button class='contact' bindtap='phoneCall' data-phone="{{details.phone}}">
   <view>
     <image src='/images/phone.png' mode='aspectFill'></image>
     <text>联系我们</text>

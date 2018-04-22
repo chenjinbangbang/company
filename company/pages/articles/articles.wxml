@@ -1,10 +1,18 @@
 <!--pages/articles/articles.wxml-->
-<view class='articles' wx:for='{{lists}}' wx:key="*this" data-id='{{item.id}}' bindtap='details'>
-  <view class='articles-img'>
-    <image src="http://123.207.246.238:82{{item.images[0]}}" mode="aspectFill"></image>
-  </view>
-  <view class='articles-detail'>
-    <view class='title'>{{item.title}}</view>
-    <view class='price'>￥{{item.price}}/{{item.unit_square}}m²/{{item.unit_time}}</view>
+<view class='noData' wx:if='{{lists.length===0}}'>
+  没有您要的文章，请返回...
+</view>
+
+<view wx:else>
+  <view class='articles' wx:for='{{lists}}' wx:key="*this" data-id='{{item.id}}' bindtap='details'>
+    <view class='articles-img'>
+      <image src="http://123.207.246.238:82{{item.images[0]}}" mode="aspectFill"></image>
+    </view>
+    <view class='articles-detail'>
+      <view class='title'>{{item.title}}</view>
+      <view class='price'>￥{{item.price}}/{{item.unit_square}}m²/{{item.unit_time}}</view>
+    </view>
   </view>
 </view>
+
+

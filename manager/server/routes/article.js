@@ -32,7 +32,7 @@ router.get('/articleList', async (req, res) => {
 
   //计算总数
   let total = 0;
-  const f1 = await connection.query('select count(*) total from articles', (err, result) => {
+  const f1 = await connection.query('select count(*) total from articles where is_open = 1', (err, result) => {
     if (err) {
       console.log(`计算分类编号为：${uid}的文章总数失败：${err.message}`);
       return;
@@ -40,7 +40,7 @@ router.get('/articleList', async (req, res) => {
     total = result[0].total;
   });
 
-  let sql = `select id,title,price,phone,is_open,unit_square,unit_time,images from articles where uid = ${uid} limit ${(page - 1) * limit},${limit}`;
+  let sql = `select id,title,price,phone,is_open,unit_square,unit_time,images from articles where uid = ${uid} and is_open = 1 limit ${(page - 1) * limit},${limit}`;
   const f2 = await connection.query(sql, (err, result) => {
     if (err) {
       console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
