@@ -44,6 +44,7 @@
   width:100%;
   bottom:0;
   background-color:#00FF66;
+  border-radius:0;
 }
 .contact view{ color:#fff; display:inline; position:relative;}
 .contact view image{ width:55rpx; height:55rpx; position:absolute; left:-100rpx; top:0;}

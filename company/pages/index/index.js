@@ -78,7 +78,7 @@ Page({
     let self = this;
     //let data = {search: this.data.search,page: this.data.page,limit: this.data.limit};
     wx.request({
-      url: 'http://localhost:3001/api/classify/classifyList',
+      url: 'http://www.mjpai.cn:3001/api/classify/classifyList',
       method: 'get',
       //data,
       success(res){
