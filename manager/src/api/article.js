@@ -26,11 +26,14 @@ export function create(data) {
   formData.append('uid', data.uid);
   formData.append('phone', data.phone);
   formData.append('is_open', data.is_open);
+  formData.append('sort_index', data.sort_index);
   formData.append('price', data.price);
   formData.append('unit_square', data.unit_square);
+  formData.append('unit_square_x', data.unit_square_x);
   formData.append('unit_time', data.unit_time);
   formData.append('price_original', data.price_original);
   formData.append('unit_square_original', data.unit_square_original);
+  formData.append('unit_square_original_x', data.unit_square_original_x);
   formData.append('unit_time_original', data.unit_time_original);
   formData.append('content', data.content);
   //文件处理

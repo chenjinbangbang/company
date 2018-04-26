@@ -141,11 +141,14 @@
         //标题
         .title{ height:60px; display:flex; align-items:center; justify-content:space-between;
           h2{ font-weight:normal;}
-          .search{ width:300px; margin-right:auto; margin-left:40px;  display:flex;
-            .el-input{}
+          .search{ margin-right:auto; margin-left:40px;  display:flex;  align-items:center;
+            .searchkey{ width:220px;}
+            .el-select{ width:140px; margin-left:20px;}
+            .el-button{ margin-left:10px;}
+            .el-switch{ margin-left:20px;}
           }
 
-          .el-button{ margin-left:10px;}
+
         }
         //表格数据
         .tableLists{

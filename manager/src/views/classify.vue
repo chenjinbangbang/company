@@ -20,7 +20,7 @@
               <img :src="dataForm.icon" v-if="dataForm.icon" alt="">
               <i class="el-icon-plus" v-else></i>
             </div>
-            <p class="red">图标尺寸建议为1:1的宽高</p>
+            <p class="red">图标尺寸宽高比建议为1:1，如100*100,200*200</p>
           </el-form-item>
           <el-form-item label="是否开启：" prop="is_open">
             <el-switch v-model="dataForm.is_open"></el-switch>
@@ -37,7 +37,7 @@
     <div class="title">
       <h2>分类管理</h2>
       <div class="search">
-        <el-input v-model="search" placeholder="请输入分类名称" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
+        <el-input class="searchkey" v-model="search" placeholder="请输入分类名称" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
         <el-button type="primary" size="small" @click="getTableLists" icon="el-icon-search">搜索</el-button>
       </div>
       <el-button type="primary" @click="addRow" size="small">添 加</el-button>
@@ -58,7 +58,7 @@
               <div slot="content">{{scope.row.bg_color}}</div>
               <div class="bg_color" :style="{'background-color': scope.row.bg_color}"></div>
             </el-tooltip>
-            
+
           </template>
         </el-table-column>
         <el-table-column prop="is_open" label="是否开启" width="120" sortable="custom">
@@ -66,7 +66,7 @@
             <div @mouseover="recordId(scope.row.id)">
               <el-switch v-model="scope.row.is_open" @change="is_openChange"></el-switch>
             </div>
-          </template>  
+          </template>
         </el-table-column>
         <el-table-column prop="create_time" label="创建时间" width="160" sortable="custom"></el-table-column>
         <el-table-column prop="update_time" label="修改时间" width="160" sortable="custom"></el-table-column>
@@ -241,7 +241,7 @@ export default {
     },
     //保存数据
     saveForm() {
-      
+
       this.$refs.dataForm.validate(valid => {
         if (valid) {
           if (this.operate === 0) {

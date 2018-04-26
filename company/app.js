@@ -36,7 +36,9 @@ App({
   globalData: {
     userInfo: null,
 
-    host: 'http://localhost:8080',
-    server: 'http://localhost:3001'
+    //host: 'http://localhost:8080',
+    //server: 'http://localhost:3001',
+    host: 'http://www.mjpai.cn:82',
+    server: 'http://www.mjpai.cn:3001'
   }
 })

@@ -47,8 +47,8 @@ router.get('/articleList', async (req, res) => {
 
   //获取某分类下的文章列表
   const selectFn = () => {
-    return new Prmise((resolve, reject) => {
-      let sql = `select id,title,price,phone,is_open,unit_square,unit_time,images from articles where uid = ${uid} and is_open = 1 limit ${(page - 1) * limit},${limit}`;
+    return new Promise((resolve, reject) => {
+      let sql = `select id,title,price,phone,is_open,unit_square,unit_square_x,unit_time,images from articles where uid = ${uid} and is_open = 1 order by sort_index limit ${(page - 1) * limit},${limit}`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
@@ -74,10 +74,19 @@ router.get('/articleList', async (req, res) => {
 
 //获取文章列表
 router.get('/list', async (req, res) => {
+  console.log(req.query);
 
+  let is_search = req.query.is_search;
   let search = req.query.search;
+  let classify_search = req.query.classify_search;
   let page = Number(req.query.page);
   let limit = Number(req.query.limit);
+
+  //分类查询是否存在
+  let sqlVal = ``;
+  if(classify_search){
+    sqlVal = `and uid = ${classify_search}`;
+  }
 
   //排序，判断排序是否存在
   let orderbyVal = ``;
@@ -87,10 +96,16 @@ router.get('/list', async (req, res) => {
     orderbyVal = `order by ${sortField} ${sort}`;
   }
 
+  //是否开启查询功能
+  let searchVal = ``;
+  if(is_search === 'true'){
+    searchVal = ` where title like '%${search}%' ${sqlVal}`;
+  }
+
   //计算总数
   const totalFn = () => {
     return new Promise((resolve, reject) => {
-      let sql = `select count(*) total from articles where title like '%${search}%'`;
+      let sql = `select count(*) total from articles ${searchVal}`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`计算文章总数失败：${err.message}`);
@@ -105,8 +120,8 @@ router.get('/list', async (req, res) => {
   //查询分页
   const selectFn = () => {
     return new Promise((resolve, reject) => {
-      let sql = `select a.id,b.name,a.title,a.phone,a.is_open,a.price,a.unit_square,a.unit_time,a.price_original,a.unit_square_original,a.unit_time_original,
-      a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id  where title like '%${search}%' ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
+      let sql = `select a.id,b.name,a.title,a.phone,a.is_open,sort_index,a.price,a.unit_square,a.unit_square_x,a.unit_time,a.price_original,a.unit_square_original,a.unit_square_original_x,a.unit_time_original,
+      a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id ${searchVal} ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`获取文章列表失败：${err.message}`);
@@ -167,9 +182,9 @@ router.post('/create', upload.array('files', 5), (req, res) => {
   console.log(imgVal);
 
   //let url = `/static/images/${req.file.filename}`;
-  let sql = `insert into articles (title,uid,phone,is_open,price,unit_square,unit_time,price_original,unit_square_original,unit_time_original,images,content,create_time,update_time) values 
-  ('${params.title}',${params.uid},'${params.phone}',${params.is_open},${params.price},${params.unit_square},'${params.unit_time}',
-  ${params.price_original},${params.unit_square_original},'${params.unit_time_original}','${imgVal}','${params.content}',now(),now())`;
+  let sql = `insert into articles (title,uid,phone,is_open,sort_index,price,unit_square,unit_square_x,unit_time,price_original,unit_square_original,unit_square_original_x,unit_time_original,images,content,create_time,update_time) values 
+  ('${params.title}',${params.uid},'${params.phone}',${params.is_open},${params.sort_index},${params.price},${params.unit_square},'${params.unit_square_x}','${params.unit_time}',
+  ${params.price_original},${params.unit_square_original},'${params.unit_square_original_x}','${params.unit_time_original}','${imgVal}','${params.content}',now(),now())`;
 
   console.log(sql);
 
@@ -242,8 +257,8 @@ router.post('/update', upload.array('files', 5), (req, res) => {
 
 
   //判断是否有文件更新
-  let sql = `update articles set title = '${params.title}',uid = '${params.uid}',phone = '${params.phone}',is_open = ${params.is_open},price = ${params.price},unit_square = ${params.unit_square},
-    unit_time = '${params.unit_time}',price_original = ${params.price_original},unit_square_original = ${params.unit_square_original},
+  let sql = `update articles set title = '${params.title}',uid = '${params.uid}',phone = '${params.phone}',is_open = ${params.is_open},sort_index = ${params.sort_index},price = ${params.price},unit_square = ${params.unit_square},unit_square_x = '${params.unit_square_x}',
+    unit_time = '${params.unit_time}',price_original = ${params.price_original},unit_square_original = ${params.unit_square_original},unit_square_original_x = '${params.unit_square_original_x}',
     unit_time_original = '${params.unit_time_original}',images = '${imgVal}',content = '${params.content}',update_time = now() where id = ${params.id}`;
 
 

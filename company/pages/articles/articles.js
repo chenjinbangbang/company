@@ -1,4 +1,7 @@
 // pages/articles/articles.js
+//获取应用实例
+const app = getApp();
+
 Page({
 
   /**
@@ -112,7 +115,7 @@ Page({
     let self = this; 
     let data = { uid: this.data.id, page: this.data.page, limit: this.data.limit}
     wx.request({
-      url: `${self.data.server}/api/classify/classifyList`,
+      url: `${self.data.server}/api/article/articleList`,
       data,
       method: 'get',
       success(res){
@@ -124,7 +127,7 @@ Page({
             total: res.data.total
           });
 
-          //console.log(list);
+          console.log(list);
           list.forEach(item => {
             item.images = item.images.split(',');
           });
@@ -141,7 +144,11 @@ Page({
           //console.log(self.data.lists);
         }
         
+      },
+      fail(err){
+        console.log(err);
       }
+
     });
   },
 

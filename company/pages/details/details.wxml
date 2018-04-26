@@ -1,16 +1,16 @@
 <!--pages/details/details.wxml-->
-<swiper autoplay='true' interval='2000' duration='500' indicator-dots='true' indicator-color='#ccc' indicator-active-color='#fff'>
+<swiper autoplay='true' interval='3000' duration='500' indicator-dots='true' indicator-color='#ccc' indicator-active-color='#fff'>
   <block wx:for='{{details.images}}' wx:key='*this'>
     <swiper-item>
-      <image src='http://localhost{{item}}' class='slide-image' mode='aspectFill'></image>
+      <image src='{{host}}{{item}}' class='slide-image' mode='widthFix'></image>
     </swiper-item>
   </block>
 </swiper>
 
 <view class='details'>
   <view class='price'>
-    <text class='price1'>￥{{details.price}}/{{details.unit_square}}m²/{{details.unit_time}}</text>
-    <text class='price2'>￥{{details.price_original}}/{{details.unit_square_original}}m²/{{details.unit_time_original}}</text>
+    <text class='price1'>￥{{details.price}}/{{details.unit_square}}{{details.unit_square_x}}/{{details.unit_time}}</text>
+    <text class='price2'>￥{{details.price_original}}/{{details.unit_square_original}}{{details.unit_square_original_x}}/{{details.unit_time_original}}</text>
   </view>
   <view class='title'>{{details.title}}</view>
   <view class='content'>

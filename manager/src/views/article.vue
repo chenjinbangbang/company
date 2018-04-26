@@ -16,18 +16,23 @@
           <el-form-item label="是否开启：" prop="is_open">
             <el-switch v-model="dataForm.is_open"></el-switch>
           </el-form-item>
+          <el-form-item label="排序权重：" prop="sort_index">
+            <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
+          </el-form-item>
           <el-form-item label="分类：" prop="uid">
             <el-select v-model="dataForm.uid">
               <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="单价：" prop="price">
+          <el-form-item label="现单价：" prop="price">
             <el-input-number v-model="dataForm.price" :min="0" :max="99999999"></el-input-number>
-            <span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}m²/{{dataForm.unit_time}}</span>
+            <span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}{{dataForm.unit_square_x}}/{{dataForm.unit_time}}</span>
           </el-form-item>
-          <el-form-item label="平方单位：" prop="unit_square">
+          <el-form-item label="单位的值：" prop="unit_square">
             <el-input-number v-model="dataForm.unit_square" :min="0" :max="99999999"></el-input-number>
-            <span class="red">m²</span>
+          </el-form-item>
+          <el-form-item label="单位：" prop="unit_square_x">
+            <el-input v-model="dataForm.unit_square_x" class="unit_square"></el-input>
           </el-form-item>
           <el-form-item label="时间单位：" prop="unit_time">
             <el-select v-model="dataForm.unit_time">
@@ -39,11 +44,13 @@
 
           <el-form-item label="原单价：" prop="price_original">
             <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
-            <span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}m²/{{dataForm.unit_time_original}}</span>
+            <span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}{{dataForm.unit_square_original_x}}/{{dataForm.unit_time_original}}</span>
           </el-form-item>
-          <el-form-item label="原平方单位：" prop="unit_square_original">
+          <el-form-item label="原单位的值：" prop="unit_square_original">
             <el-input-number v-model="dataForm.unit_square_original" :min="0" :max="99999999"></el-input-number>
-            <span class="red">m² {{dataForm.unit_square_original}}</span>
+          </el-form-item>
+          <el-form-item label="原单位：" prop="unit_square_original_x">
+            <el-input v-model="dataForm.unit_square_original_x" class="unit_square"></el-input>
           </el-form-item>
           <el-form-item label="原时间单位：" prop="unit_time_original">
             <el-select v-model="dataForm.unit_time_original">
@@ -67,7 +74,7 @@
                        :on-error="handleError"
             >
               <i class="el-icon-plus"></i>
-              <div slot="tip" class="el-upload__tip red">至少上传1张，最多上传5张图片，只能上传jpg/jpeg/png/gif格式的图片，且不超过500kb</div>
+              <div slot="tip" class="el-upload__tip red">至少上传1张，最多上传5张图片，只能上传jpg/jpeg/png/gif格式的图片，不超过500kb且不少于10kb，尺寸宽高比建议为3:2，如600*400。900*600,</div>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
@@ -90,8 +97,15 @@
     <div class="title">
       <h2>文章管理</h2>
       <div class="search">
-        <el-input v-model="search" placeholder="请输入文章标题" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
+        <el-input class="searchkey" v-model="search" placeholder="请输入文章标题" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
+        <el-select v-model="classify_search" size="small" placeholder="选择分类">
+          <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+
         <el-button type="primary" size="small" @click="getTableLists" icon="el-icon-search">搜索</el-button>
+
+        <el-switch v-model="is_search" @change="is_searchChange" active-text="开启查询" inactive-text="关闭查询"></el-switch>
+
       </div>
       <el-button type="primary" @click="addRow" size="small">添 加</el-button>
     </div>
@@ -107,16 +121,17 @@
             <div @mouseover="recordId(scope.row.id)">
               <el-switch v-model="scope.row.is_open" @change="is_openChange"></el-switch>
             </div>
-          </template>  
+          </template>
         </el-table-column>
-        <el-table-column prop="price" label="单价" width="150">
+        <el-table-column prop="sort_index" label="排序权重" width="120" sortable="custom"></el-table-column>
+        <el-table-column prop="price" label="现单价" width="150">
           <template slot-scope="scope">
-            <p>￥{{scope.row.price}}/{{scope.row.unit_square}}m²/{{scope.row.unit_time}}</p>
+            <p>￥{{scope.row.price}}/{{scope.row.unit_square}}{{scope.row.unit_square_x}}/{{scope.row.unit_time}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="price_original" label="原单价" width="150">
           <template slot-scope="scope">
-            <p>￥{{scope.row.price_original}}/{{scope.row.unit_square_original}}m²/{{scope.row.unit_time_original}}</p>
+            <p>￥{{scope.row.price_original}}/{{scope.row.unit_square_original}}{{scope.row.unit_square_original_x}}/{{scope.row.unit_time_original}}</p>
           </template>
         </el-table-column>
         <!--<el-table-column prop="content" label="详情" width="200"></el-table-column>-->
@@ -187,11 +202,14 @@ export default {
         uid: null,
         phone: "",
         is_open: true,
-        price: 0,
-        unit_square: 0,
-        unit_time: "月", //单价
-        price_original: 0,
-        unit_square_original: 0,
+        sort_index: 0,
+        price: 1,
+        unit_square: 1,
+        unit_square_x: '平方米',
+        unit_time: "月", //现单价
+        price_original: 1,
+        unit_square_original: 1,
+        unit_square_original_x: '平方米',
         unit_time_original: "月", //原单价
         //images: [{name: 1, url: 'http://123.207.246.238:82/server/public/images/articleImg1.png'}],
         images: [],
@@ -207,8 +225,10 @@ export default {
       page: 1, //当前页
       limit: 10, //一页多少条记录
       search: "", //搜索关键字
+      classify_search: '', //按照分类查询
       sort: "", //升序为ascending，降序为descending
       sortField: "", //进行排序的字段，默认id排序
+      is_search: true, //是否开启查询项
       //表单验证
       rules: {
         title: { required: true, message: "请输入标题！", trigger: "blur" },
@@ -220,10 +240,15 @@ export default {
             trigger: "blur"
           }
         ],
-        price: { required: true, message: "请输入单价！", trigger: "blur" },
+        price: { required: true, message: "请输入现单价！", trigger: "blur" },
         unit_square: {
           required: true,
-          message: "请输入平方单位！",
+          message: "请输入单位的值！",
+          trigger: "blur"
+        },
+        unit_square_x: {
+          required: true,
+          message: "请输入单位！",
           trigger: "blur"
         },
         unit_time: {
@@ -238,7 +263,12 @@ export default {
         },
         unit_square_original: {
           required: true,
-          message: "请输入原平方单位！",
+          message: "请输入原单位的值！",
+          trigger: "blur"
+        },
+        unit_square_original_x: {
+          required: true,
+          message: "请输入原单位！",
           trigger: "blur"
         },
         unit_time_original: {
@@ -260,7 +290,7 @@ export default {
     //上传多张图片
     //覆盖默认的上传行为，可以自定义上传的实现（本地）
     submitUpload(file, fileList) {
-      //console.log(fileList);
+      //console.log(file);
     },
     //文件上传成功（服务器）
     handleSuccess(res, file, fileList) {
@@ -275,6 +305,29 @@ export default {
     //上传文件之前的钩子，判断图片是否符合标准
     handleBeforeUpload(file) {
       //console.log(file);
+
+      //把图片转化为base，来获取图片的宽度和高度
+      /*let windowURL = window.URL || window.webkitUrl;
+      let imgUrl = windowURL.createObjectURL(file);
+      let img = new Image();
+      img.src = imgUrl;
+      img.onload = () => {
+        console.log(img.height);
+        if(img.width/img.height !== 2){
+          this.$confirm('图片尺寸的宽高比例不符合2:1规则，可能会出现变形的情况','提示',{
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+
+
+
+          }).catch(() => {
+            return false;
+          });
+        }
+      };*/
+
       if (!/jpg|jpeg|png|gif/.test(file.type)) {
         this.$message.warning({
           message: "只能上传jpg/jpeg/png/gif格式的图片",
@@ -286,7 +339,13 @@ export default {
         this.$message.warning({ message: "图片不能大于500kb", center: true });
         return false;
       }
+      if(file.size / 1024 < 10){
+        this.$message.warning({ message: "图片不能少于10kb", center: true });
+        return false;
+      }
       return true;
+
+
     },
     //文件超出个数限制时的钩子
     handleExceed() {
@@ -314,7 +373,9 @@ export default {
     //获取表格数据
     getTableLists() {
       let params = {
+        is_search: this.is_search,
         search: this.search,
+        classify_search: this.classify_search,
         page: this.page,
         limit: this.limit,
         sort: this.sort,
@@ -354,6 +415,13 @@ export default {
           this.classifyLists = res.data.results;
         }
       });
+    },
+
+    //是否开启查询项
+    is_searchChange(val){
+      //console.log(val);
+      //获取表格数据
+      this.getTableLists();
     },
 
     //排序
@@ -475,14 +543,14 @@ export default {
               formData.append("uid", params.uid);
               formData.append('phone', params.phone);
               formData.append('is_open', params.is_open);
+              formData.append('sort_index', params.sort_index);
               formData.append("price", params.price);
               formData.append("unit_square", params.unit_square);
+              formData.append("unit_square_x", params.unit_square_x);
               formData.append("unit_time", params.unit_time);
               formData.append("price_original", params.price_original);
-              formData.append(
-                "unit_square_original",
-                params.unit_square_original
-              );
+              formData.append("unit_square_original", params.unit_square_original);
+              formData.append("unit_square_original_x", params.unit_square_original_x);
               formData.append("unit_time_original", params.unit_time_original);
               formData.append("content", params.content);
 
@@ -551,11 +619,14 @@ export default {
           uid: null,
           phone: "",
           is_open: true,
-          price: 0,
-          unit_square: 0,
-          unit_time: "月", //单价
-          price_original: 0,
-          unit_square_original: 0,
+          sort_index: 0,
+          price: 1,
+          unit_square: 1,
+          unit_square_x: '平方米',
+          unit_time: "月", //现单价
+          price_original: 1,
+          unit_square_original: 1,
+          unit_square_original_x: '平方米',
           unit_time_original: "月", //原单价
           images: [],
           content: ""
@@ -573,7 +644,7 @@ export default {
     handleCurrentChange(val) {
       this.page = val;
       this.getTableLists();
-    }
+    },
   }
 };
 </script>
@@ -588,6 +659,7 @@ export default {
     .price {
       font-size: 16px;
     }
+    .unit_square{ width:200px;}
   }
   .iconImg {
     width: 30px;

@@ -1,10 +1,17 @@
 // pages/details/details.js
+
+//获取应用实例
+const app = getApp();
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    host: '', //ip地址
+    server: '', //服务地址
+
     details: {
       // imgUrls: ['/images/articleImg1.png', '/images/articleImg2.png', '/images/articleImg1.png', '/images/articleImg2.png'],
       // price: '￥103.50/方',
@@ -19,6 +26,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.setData({
+      host: app.globalData.host, //设置ip地址
+      server: app.globalData.server,  //设置服务地址
+    });
+
     //console.log(options.id);
     if (options.id) {
       this.getDetails(options.id);
@@ -85,7 +97,7 @@ Page({
   getDetails(id) {
     let self = this;
     wx.request({
-      url: `http://localhost:3001/api/article/getInfo?id=${id}`,
+      url: `${self.data.server}/api/article/getInfo?id=${id}`,
       method: 'get',
       success(res) {
         res = res.data;

@@ -1,6 +1,6 @@
 <!--pages/articles/articles.wxml-->
 <view class='noData' wx:if='{{lists.length===0}}'>
-  没有您要的文章，请返回...
+  当前没有内容哦...
 </view>
 
 <view wx:else>
@@ -10,7 +10,7 @@
     </view>
     <view class='articles-detail'>
       <view class='title'>{{item.title}}</view>
-      <view class='price'>￥{{item.price}}/{{item.unit_square}}m²/{{item.unit_time}}</view>
+      <view class='price'>￥{{item.price}}/{{item.unit_square}}{{item.unit_square_x}}/{{item.unit_time}}</view>
     </view>
   </view>
 </view>
