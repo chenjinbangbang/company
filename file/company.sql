@@ -64,7 +64,7 @@ CREATE TABLE `articles` (
   `unit_square_original` int(10) DEFAULT NULL,
   `unit_time_original` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +73,7 @@ CREATE TABLE `articles` (
 
 LOCK TABLES `articles` WRITE;
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
-INSERT INTO `articles` VALUES (12,30,'深圳市',100.00,'15915155078',1,5,'月','/server/public/images/files_1524212623913_3.jpg','我的详情我的详情我的详情','2018-04-20 16:23:43','2018-04-21 18:32:10',100.00,5,'月'),(13,30,'广州市',100.00,'15915155076',1,5,'月','/server/public/images/files_1524212645365_1.jpg,/server/public/images/files_1524305138613_1.jpg','<p>我的详情我的详情我的详情</p>','2018-04-20 16:24:05','2018-04-21 18:35:41',100.00,5,'月'),(14,30,'深圳市',100.00,'15915155079',1,5,'月','/server/public/images/files_1524212645365_1.jpg','我的详情我的详情我的详情','2018-04-20 16:24:05','2018-04-21 18:31:55',100.00,5,'月'),(15,32,'珠海市',100.00,'15915155079',1,5,'月','/server/public/images/files_1524217684170_2.jpg','我的详情我的详情我的详情','2018-04-20 17:48:04','2018-04-20 17:48:04',100.00,5,'月');
+INSERT INTO `articles` VALUES (18,37,'深圳市',1.00,'15915155078',1,1,'月','/static/images/files_1524725478207_2.jpg','<p><br data-mce-bogus=\"1\"></p>','2018-04-26 14:51:18','2018-04-26 14:52:19',1.00,1,'月'),(19,39,'ss',1.00,'15915155079',1,1,'月','/static/images/files_1524729359059_3.jpg','','2018-04-26 15:55:59','2018-04-26 15:55:59',1.00,1,'月');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,8 +91,9 @@ CREATE TABLE `classifys` (
   `is_open` tinyint(1) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+  `bg_color` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +102,7 @@ CREATE TABLE `classifys` (
 
 LOCK TABLES `classifys` WRITE;
 /*!40000 ALTER TABLE `classifys` DISABLE KEYS */;
-INSERT INTO `classifys` VALUES (30,'我的办公室','/server/public/images/file_1524212613527_2.jpg',0,'2018-04-20 16:23:33','2018-04-20 16:23:33'),(31,'我的办公室111','/server/public/images/file_1524212708809_2.jpg',1,'2018-04-20 16:25:08','2018-04-20 16:25:08'),(32,'tttttt','/server/public/images/file_1524212717816_icon2.png',1,'2018-04-20 16:25:17','2018-04-21 18:44:48');
+INSERT INTO `classifys` VALUES (37,'办公地址','/static/images/file_1524733919751_2.jpg',1,'2018-04-26 14:50:38','2018-04-26 17:11:59','#F6D5F7'),(39,'搜索','/static/images/file_1524733914989_1.jpg',1,'2018-04-26 15:50:54','2018-04-26 17:11:54','#FFE2E2'),(40,'xxxx','/static/images/file_1524733203651_4.jpg',1,'2018-04-26 16:45:27','2018-04-26 17:00:03','#E4DDFF');
 /*!40000 ALTER TABLE `classifys` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -114,4 +115,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-21 18:45:52
+-- Dump completed on 2018-04-26 18:07:49
