@@ -5,6 +5,9 @@ Page({
    * 页面的初始数据
    */
   data: {
+    host: '', //ip地址
+    server: '', //服务地址
+
     id: 0, //分类id
     total: 0, //总数
     page: 1, //当前页
@@ -41,7 +44,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    //console.log(options);
+    this.setData({
+      host: app.globalData.host, //设置ip地址
+      server: app.globalData.server,  //设置服务地址
+    });
+
+    console.log(options);
     if (options.id){
       this.setData({
         id: options.id
@@ -104,7 +112,7 @@ Page({
     let self = this; 
     let data = { uid: this.data.id, page: this.data.page, limit: this.data.limit}
     wx.request({
-      url: `http://www.mjpai.cn:3001/api/article/articleList`,
+      url: `${self.data.server}/api/classify/classifyList`,
       data,
       method: 'get',
       success(res){

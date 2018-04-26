@@ -10,12 +10,17 @@
           <el-form-item label="名称：" prop="name">
             <el-input v-model="dataForm.name"></el-input>
           </el-form-item>
+          <el-form-item label="背景色：" prop="bg_color">
+            <!-- <el-input v-model="dataForm.bg_color"></el-input> -->
+            <el-color-picker v-model="dataForm.bg_color"></el-color-picker>
+          </el-form-item>
           <el-form-item label="图标：" prop="icon">
             <div class="icon" @click="fileClick">
               <input type="file" ref="file" @change="fileUpload" style="display:none;">
               <img :src="dataForm.icon" v-if="dataForm.icon" alt="">
               <i class="el-icon-plus" v-else></i>
             </div>
+            <p class="red">图标尺寸建议为1:1的宽高</p>
           </el-form-item>
           <el-form-item label="是否开启：" prop="is_open">
             <el-switch v-model="dataForm.is_open"></el-switch>
@@ -45,6 +50,15 @@
         <el-table-column prop="icon" label="图标" width="100">
           <template slot-scope="scope">
             <img :src="scope.row.icon" alt="" class="iconImg">
+          </template>
+        </el-table-column>
+        <el-table-column prop="bg_color" label="背景色" width="100">
+          <template slot-scope="scope">
+            <el-tooltip effect="dark" placement="top">
+              <div slot="content">{{scope.row.bg_color}}</div>
+              <div class="bg_color" :style="{'background-color': scope.row.bg_color}"></div>
+            </el-tooltip>
+            
           </template>
         </el-table-column>
         <el-table-column prop="is_open" label="是否开启" width="120" sortable="custom">
@@ -99,7 +113,7 @@ export default {
       id: null, //记录id，开启关闭功能需要
       tableLists: [],
       //表单数据
-      dataForm: { id: null, name: "", icon: "", is_open: true },
+      dataForm: { id: null, name: "", icon: "",bg_color: '', is_open: true },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
@@ -115,6 +129,7 @@ export default {
       //表单验证
       rules: {
         name: [{ required: true, message: "请输入名称！", trigger: "blur" }],
+        bg_color: [{ required: true, message: "请选择背景色！", trigger: "blur" }],
         icon: [{ required: true, message: "请上传图标！", trigger: "blur" }]
       }
     };
@@ -136,6 +151,11 @@ export default {
 
       this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
     },
+
+    //改变背景色
+    // bg_colorChange(val){
+    //   console.log(val);
+    // },
 
     /*----------------------表单数据与操作--------------------*/
     //获取表格数据
@@ -229,6 +249,7 @@ export default {
             let params = {
               name: this.dataForm.name,
               icon: this.iconFile,
+              bg_color: this.dataForm.bg_color,
               is_open: this.dataForm.is_open
             };
 
@@ -249,6 +270,7 @@ export default {
               id: this.dataForm.id,
               name: this.dataForm.name,
               icon: this.iconFile,
+              bg_color: this.dataForm.bg_color,
               is_open: this.dataForm.is_open
             };
             console.log(params);
@@ -299,7 +321,7 @@ export default {
         //解决快速点击2次时，表单已重置修改信息为空的问题
         //两个一起解决重置问题
         this.$refs.dataForm.resetFields();
-        this.dataForm = { id: null, name: "", icon: "",is_open: true };
+        this.dataForm = { id: null, name: "", icon: "",bg_color: '',is_open: true };
         this.visible = false;
       }, 100);
     },
@@ -321,9 +343,19 @@ export default {
 
 <style lang='scss'>
 .classify {
+  //图标
   .iconImg {
     width: 30px;
+    cursor:pointer;
   }
+  //背景色
+  .bg_color{
+    width: 20px;
+    height: 20px;
+    margin:auto;
+    cursor:pointer;
+  }
+
   .icon {
     width: 150px;
     height: 150px;

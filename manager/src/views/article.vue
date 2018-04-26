@@ -37,13 +37,13 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="原单价：" prop="price">
+          <el-form-item label="原单价：" prop="price_original">
             <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
             <span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}m²/{{dataForm.unit_time_original}}</span>
           </el-form-item>
           <el-form-item label="原平方单位：" prop="unit_square_original">
             <el-input-number v-model="dataForm.unit_square_original" :min="0" :max="99999999"></el-input-number>
-            <span class="red">m²</span>
+            <span class="red">m² {{dataForm.unit_square_original}}</span>
           </el-form-item>
           <el-form-item label="原时间单位：" prop="unit_time_original">
             <el-select v-model="dataForm.unit_time_original">

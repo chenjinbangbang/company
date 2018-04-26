@@ -9,6 +9,8 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
 
+    host: '', //ip地址
+    server: '', //服务地址
     search: '',
     page: 1,
     limit: 1000,
@@ -36,6 +38,11 @@ Page({
     })
   },
   onLoad: function () {
+    this.setData({
+      host: app.globalData.host, //设置ip地址
+      server: app.globalData.server,  //设置服务地址
+    });
+
     this.getLists();
 
     if (app.globalData.userInfo) {
@@ -78,7 +85,7 @@ Page({
     let self = this;
     //let data = {search: this.data.search,page: this.data.page,limit: this.data.limit};
     wx.request({
-      url: 'http://www.mjpai.cn:3001/api/classify/classifyList',
+      url: `${self.data.server}/api/classify/classifyList`,
       method: 'get',
       //data,
       success(res){
@@ -89,7 +96,6 @@ Page({
           });
           //console.log(self.data.lists);
         }
-        
       }
     });
   }

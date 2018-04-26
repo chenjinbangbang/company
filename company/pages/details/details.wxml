@@ -2,7 +2,7 @@
 <swiper autoplay='true' interval='2000' duration='500' indicator-dots='true' indicator-color='#ccc' indicator-active-color='#fff'>
   <block wx:for='{{details.images}}' wx:key='*this'>
     <swiper-item>
-      <image src='http://123.207.246.238:82{{item}}' class='slide-image' mode='aspectFill'></image>
+      <image src='http://localhost{{item}}' class='slide-image' mode='aspectFill'></image>
     </swiper-item>
   </block>
 </swiper>
@@ -21,7 +21,10 @@
 
 <button class='contact' bindtap='phoneCall' data-phone="{{details.phone}}">
   <view>
-    <image src='/images/phone.png' mode='aspectFill'></image>
-    <text>联系我们</text>
+    <!-- <image src='/images/phone.png' mode='aspectFill'></image> -->
+    <text class="phone">
+
+    </text>
+    <text class="us">联系我们</text>
   </view>
 </button>

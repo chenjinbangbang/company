@@ -5,13 +5,8 @@ import { getUsername } from '@/utils/auth';
 
 const service = axios.create({
     baseURL: process.env.BASE_API,
-    //baseURL: "http://123.207.246.238:3100/api",
-    //baseURL: "http://localhost:3100/api",
     withCredentials: true,
     timeout: 5000,
-    /*headers: {
-        'Content-Type': 'multipart/form-data'
-    }*/
 });
 
 service.interceptors.request.use(config => {
@@ -20,6 +15,8 @@ service.interceptors.request.use(config => {
     //     config.headers['username'] = getUsername();
     // }
 
+
+
     return config;
 },error => {
     Promise.reject(error);
@@ -27,6 +24,11 @@ service.interceptors.request.use(config => {
 
 service.interceptors.response.use(response => {
     let res = response.data;
+
+    if(res.error_code > 0){
+        Message.warning({message: res.data,center: true});
+    }
+
     return res;
 },error => {
     Message({ message: error.message, type: 'error', duration: 2000,center:true});

@@ -13,8 +13,10 @@
 </view> -->
 
 <view class='home'>
-  <navigator url="/pages/articles/articles?id={{item.id}}" hover-class='navigator-hover' wx:for='{{lists}}' wx:key='*this'>
-    <image src="http://123.207.246.238:82{{item.icon}}" mode="aspectFit"></image>
-    <text>{{item.name}}</text> 
-  </navigator>
+  <view class="main">
+    <navigator url="/pages/articles/articles?id={{item.id}}" hover-class='navigator-hover' wx:for='{{lists}}' wx:key='*this' style="background-color: {{item.bg_color}}">
+      <image src="{{host}}{{item.icon}}" mode="aspectFit"></image>
+      <text>{{item.name}} </text> 
+    </navigator>
+  </view>
 </view>

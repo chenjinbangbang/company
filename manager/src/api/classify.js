@@ -24,6 +24,7 @@ export function create(data) {
   let formData = new FormData();
   formData.append('name', data.name);
   formData.append('file', data.icon);
+  formData.append('bg_color', data.bg_color);
   formData.append('is_open', data.is_open);
   //console.log(formData.getAll('file'));
 
@@ -53,6 +54,7 @@ export function update(data) {
   formData.append('id', data.id);
   formData.append('name', data.name);
   formData.append('file', data.icon);
+  formData.append('bg_color', data.bg_color);
   formData.append('is_open', data.is_open);
 
   //console.log(formData.getAll('file'));

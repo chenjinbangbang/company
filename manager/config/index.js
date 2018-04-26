@@ -13,12 +13,7 @@ module.exports = {
     proxyTable: {
       '/api': {
         target: 'http://localhost:3001'
-      },
-      '/posts': {
-        target: 'https://jsonplaceholder.typicode.com',
-        secure: true,
-        changeOrigin: true,
-      },
+      }
     },
 
     // Various Dev Server settings

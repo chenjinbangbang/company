@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 let Storage = multer.diskStorage({
   destination(req, file, callback) {
-    callback(null, './server/public/images');
+    callback(null, './static/images');
   },
   filename(req, file, callback) {
     callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
@@ -31,32 +31,45 @@ router.get('/articleList', async (req, res) => {
   let limit = Number(req.query.limit);
 
   //计算总数
-  let total = 0;
-  const f1 = await connection.query('select count(*) total from articles where is_open = 1', (err, result) => {
-    if (err) {
-      console.log(`计算分类编号为：${uid}的文章总数失败：${err.message}`);
-      return;
-    }
-    total = result[0].total;
-  });
-
-  let sql = `select id,title,price,phone,is_open,unit_square,unit_time,images from articles where uid = ${uid} and is_open = 1 limit ${(page - 1) * limit},${limit}`;
-  const f2 = await connection.query(sql, (err, result) => {
-    if (err) {
-      console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
-      return;
-    }
-
-    //console.log(result);
-
-    res.json({
-      error_code: 0,
-      data: {
-        total,
-        results: result
-      }
+  const totalFn = () => {
+    return new Promise((resolve, reject) => {
+      let sql = 'select count(*) total from articles where is_open = 1';
+      connection.query(sql, (err, result) => {
+        if (err) {
+          console.log(`计算分类编号为：${uid}的文章总数失败：${err.message}`);
+          return reject(err);
+        }
+        resolve(result[0].total);
+      });
     });
-  });
+  };
+  const total = await totalFn();
+
+  //获取某分类下的文章列表
+  const selectFn = () => {
+    return new Prmise((resolve, reject) => {
+      let sql = `select id,title,price,phone,is_open,unit_square,unit_time,images from articles where uid = ${uid} and is_open = 1 limit ${(page - 1) * limit},${limit}`;
+      connection.query(sql, (err, result) => {
+        if (err) {
+          console.log(`获取分类编号为：${uid}的文章列表失败：${err.message}`);
+          return reject(err);
+        }
+        //console.log(result);
+        let json = {
+          error_code: 0,
+          data: {
+            total,
+            results: result
+          }
+        };
+        resolve(json);
+      });
+    });
+  };
+  const result = await selectFn();
+
+  res.json(result);
+
 });
 
 //获取文章列表
@@ -75,34 +88,45 @@ router.get('/list', async (req, res) => {
   }
 
   //计算总数
-  let total = 0;
-  const f1 = await connection.query(`select count(*) total from articles where title like '%${search}%'`, (err, result) => {
-    if (err) {
-      console.log(`计算文章总数失败：${err.message}`);
-      return;
-    }
-    total = result[0].total;
-  });
+  const totalFn = () => {
+    return new Promise((resolve, reject) => {
+      let sql = `select count(*) total from articles where title like '%${search}%'`;
+      connection.query(sql, (err, result) => {
+        if (err) {
+          console.log(`计算文章总数失败：${err.message}`);
+          return reject(err);
+        }
+        resolve(result[0].total);
+      });
+    });
+  };
+  const total = await totalFn();
 
   //查询分页
-  let sql = `select a.id,b.name,a.title,a.phone,a.is_open,a.price,a.unit_square,a.unit_time,a.price_original,a.unit_square_original,a.unit_time_original,
-  a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id  where title like '%${search}%' ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
-  const f2 = await connection.query(sql, (err, result) => {
-    if (err) {
-      console.log(`获取文章列表失败：${err.message}`);
-      return;
-    }
-
-    //console.log(result);
-
-    res.json({
-      error_code: 0,
-      data: {
-        total,
-        results: result
-      }
+  const selectFn = () => {
+    return new Promise((resolve, reject) => {
+      let sql = `select a.id,b.name,a.title,a.phone,a.is_open,a.price,a.unit_square,a.unit_time,a.price_original,a.unit_square_original,a.unit_time_original,
+      a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id  where title like '%${search}%' ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
+      connection.query(sql, (err, result) => {
+        if (err) {
+          console.log(`获取文章列表失败：${err.message}`);
+          return reject(err);
+        }
+        //console.log(result);
+        let json = {
+          error_code: 0,
+          data: {
+            total,
+            results: result
+          }
+        };
+        resolve(json);
+      });
     });
-  });
+  };
+  const result = await selectFn();
+
+  res.json(result);
 });
 
 //修改开启功能
@@ -134,15 +158,15 @@ router.post('/create', upload.array('files', 5), (req, res) => {
   let imgVal = [];
   req.files.forEach((item, index) => {
     if (index < req.files.length - 1) {
-      imgVal.push(`/server/public/images/${item.filename},`);
+      imgVal.push(`/static/images/${item.filename},`);
     } else {
-      imgVal.push(`/server/public/images/${item.filename}`);
+      imgVal.push(`/static/images/${item.filename}`);
     }
   });
   imgVal = imgVal.join(',');
   console.log(imgVal);
 
-  //let url = `/server/public/images/${req.file.filename}`;
+  //let url = `/static/images/${req.file.filename}`;
   let sql = `insert into articles (title,uid,phone,is_open,price,unit_square,unit_time,price_original,unit_square_original,unit_time_original,images,content,create_time,update_time) values 
   ('${params.title}',${params.uid},'${params.phone}',${params.is_open},${params.price},${params.unit_square},'${params.unit_time}',
   ${params.price_original},${params.unit_square_original},'${params.unit_time_original}','${imgVal}','${params.content}',now(),now())`;
@@ -211,7 +235,7 @@ router.post('/update', upload.array('files', 5), (req, res) => {
 
   //处理新增或修改的图片
   req.files.forEach((item, index) => {
-    imgVal.push(`/server/public/images/${item.filename}`);
+    imgVal.push(`/static/images/${item.filename}`);
   });
   //console.log(imgVal);
   imgVal = imgVal.join(',');
