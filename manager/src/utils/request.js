@@ -11,11 +11,9 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
     //console.log(process.env.NODE_ENV);
-    // if(store.getters.username){
-    //     config.headers['username'] = getUsername();
-    // }
-
-
+    if(getUsername()){
+        config.headers['username'] = getUsername();
+    }
 
     return config;
 },error => {

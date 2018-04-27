@@ -6,7 +6,7 @@
         <el-input type="text" v-model="ruleForm.username" autoComplete="off" placeholder="账号"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input type="adminPwd" v-model="ruleForm.password" autoComplete="off" placeholder="密码"></el-input>
+        <el-input type="password" v-model="ruleForm.password" autoComplete="off" placeholder="密码"></el-input>
       </el-form-item>
       <el-form-item style="width:100%;">
         <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit" :loading="logining">登录</el-button>
@@ -25,8 +25,8 @@
       return {
         logining: false,
         ruleForm: {
-          username: 'admin',
-          password: '123456'
+          username: '',
+          password: ''
         },
         rules: {
           username: [
@@ -49,13 +49,10 @@
 
             login(params).then(res => {
               if(res.error_code === 0){
-
                 this.$message.success({message: '登录成功！',center: true,duration: 2000});
                 setUsername(res.data.username);
                 this.$router.push({path: '/'});
-
               }else if(res.error_code === 1){
-                this.$message.error({message: "输入管理员账号或者密码错误！",center: true,duration: 2000});
                 this.logining = false;
               }
             });

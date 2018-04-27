@@ -25,6 +25,9 @@
           <el-form-item label="是否开启：" prop="is_open">
             <el-switch v-model="dataForm.is_open"></el-switch>
           </el-form-item>
+          <el-form-item label="排序权重：" prop="sort_index">
+            <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
+          </el-form-item>
 
           <el-form-item>
             <el-button type="primary" @click="saveForm">保 存</el-button>
@@ -38,6 +41,11 @@
       <h2>分类管理</h2>
       <div class="search">
         <el-input class="searchkey" v-model="search" placeholder="请输入分类名称" @keyup.enter.native="getTableLists" clearable size="small"></el-input>
+        <el-select v-model="is_open" size="small" placeholder="选择是否开启">
+          <el-option :value="2" label="全部"></el-option>
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="0" label="关闭"></el-option>
+        </el-select>
         <el-button type="primary" size="small" @click="getTableLists" icon="el-icon-search">搜索</el-button>
       </div>
       <el-button type="primary" @click="addRow" size="small">添 加</el-button>
@@ -68,6 +76,7 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column prop="sort_index" label="排序权重" width="120" sortable="custom"></el-table-column>
         <el-table-column prop="create_time" label="创建时间" width="160" sortable="custom"></el-table-column>
         <el-table-column prop="update_time" label="修改时间" width="160" sortable="custom"></el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
@@ -113,7 +122,7 @@ export default {
       id: null, //记录id，开启关闭功能需要
       tableLists: [],
       //表单数据
-      dataForm: { id: null, name: "", icon: "",bg_color: '', is_open: true },
+      dataForm: { id: null, name: "", icon: "",bg_color: '', is_open: true,sort_index: 1 },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
@@ -124,6 +133,7 @@ export default {
       page: 1, //当前页
       limit: 10, //一页多少条记录
       search: "", //搜索关键字
+      is_open: 2, //2代表全部，1代表开启，0代表关闭
       sort: "", //升序为ascending，降序为descending
       sortField: "", //进行排序的字段，默认id排序
       //表单验证
@@ -162,6 +172,7 @@ export default {
     getTableLists() {
       let params = {
         search: this.search,
+        is_open: this.is_open,
         page: this.page,
         limit: this.limit,
         sort: this.sort,
@@ -241,7 +252,26 @@ export default {
     },
     //保存数据
     saveForm() {
-
+//密码的验证
+      let passwordRule = (rule,value,callback) => {
+        const valReg = /^[\w-]{6,18}$/; //6-18位的字母/数字/_/-组成
+        if(!valReg.test(value)){
+          callback(new Error('密码必须为6-18位的字母/数字/_/-组成'));
+        }else {
+          if (value !== '') {
+            this.$refs.user.validateField('passwordReg');
+          }
+          callback();
+        }
+      };
+      //确认密码的验证
+      let passwordRegRule = (rule,value,callback) =>{
+        if(value !== this.user.password){
+          callback(new Error('两次输入密码不一致'));
+        }else{
+          callback();
+        }
+      };
       this.$refs.dataForm.validate(valid => {
         if (valid) {
           if (this.operate === 0) {
@@ -250,7 +280,8 @@ export default {
               name: this.dataForm.name,
               icon: this.iconFile,
               bg_color: this.dataForm.bg_color,
-              is_open: this.dataForm.is_open
+              is_open: this.dataForm.is_open,
+              sort_index: this.dataForm.sort_index
             };
 
             create(params).then(res => {
@@ -271,7 +302,8 @@ export default {
               name: this.dataForm.name,
               icon: this.iconFile,
               bg_color: this.dataForm.bg_color,
-              is_open: this.dataForm.is_open
+              is_open: this.dataForm.is_open,
+              sort_index: this.dataForm.sort_index
             };
             console.log(params);
 
@@ -321,7 +353,7 @@ export default {
         //解决快速点击2次时，表单已重置修改信息为空的问题
         //两个一起解决重置问题
         this.$refs.dataForm.resetFields();
-        this.dataForm = { id: null, name: "", icon: "",bg_color: '',is_open: true };
+        this.dataForm = { id: null, name: "", icon: "",bg_color: '',is_open: true,sort_index: 1, };
         this.visible = false;
       }, 100);
     },

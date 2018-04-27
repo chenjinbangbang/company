@@ -1,76 +1,163 @@
 <template>
-    <div class='mainPage'>
-        <el-container>
-            <el-header>
-                <h1 class="logo"><span>后台管理系统</span></h1>
-                <ul>
-                    <li>
-                        <el-button>
-                            {{username}} 欢迎您
-                        </el-button>
-                    </li>
-                    <li @click="logout">
-                        <el-button @click="logout">退出系统</el-button>
-                    </li>
-                </ul>
-            </el-header>
-            <el-container>
-                <el-aside width="240px">
-                    <el-menu :defaultActive="routerIndex" :router="true">
-                        <el-menu-item index="/">
-                            <i class="el-icon-menu"></i>
-                            <i class="el-icon-arrow-right"></i>
-                            <span slot="title">分类管理</span>
-                        </el-menu-item>
-                        <el-menu-item index="/article">
-                            <i class="el-icon-view"></i>
-                            <i class="el-icon-arrow-right"></i>
-                            <span slot="title">文章管理</span>
-                        </el-menu-item>
-                    </el-menu>
-                </el-aside>
-                <el-main>
-                    <transition name="fade">
-                        <router-view/>
-                    </transition>
-                </el-main>
-            </el-container>
-            <!--<el-footer height="40px">footer</el-footer>-->
-        </el-container>
-    </div>
+  <div class='mainPage'>
+
+    <el-dialog title="修改密码" :visible.sync="visible" center :closeOnClickModal="false">
+
+      <el-form :model="user" ref="user" :rules="rules" labelWidth="120px">
+        <el-form-item label="密码：" prop="password">
+          <el-input type="password" v-model="user.password" autoComplete="off" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码：" prop="passwordReg">
+          <el-input type="password" v-model="user.passwordReg" autoComplete="off" placeholder="请确认密码"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm" :loading="loading">修改</el-button>
+          <el-button @click="resetForm">重置</el-button>
+
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <el-container>
+      <el-header>
+        <h1 class="logo"><span>后台管理系统</span></h1>
+        <ul>
+          <li>
+            <el-button>
+              {{username}} 欢迎您
+            </el-button>
+          </li>
+          <li>
+            <el-button @click="changePwd">
+              修改密码
+            </el-button>
+          </li>
+          <li @click="logout">
+            <el-button @click="logout">退出系统</el-button>
+          </li>
+        </ul>
+      </el-header>
+      <el-container>
+        <el-aside width="240px">
+          <el-menu :defaultActive="routerIndex" :router="true">
+            <el-menu-item index="/">
+              <i class="el-icon-menu"></i>
+              <i class="el-icon-arrow-right"></i>
+              <span slot="title">分类管理</span>
+            </el-menu-item>
+            <el-menu-item index="/article">
+              <i class="el-icon-view"></i>
+              <i class="el-icon-arrow-right"></i>
+              <span slot="title">文章管理</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
+        <el-main>
+          <transition name="fade">
+            <router-view/>
+          </transition>
+        </el-main>
+      </el-container>
+      <!--<el-footer height="40px">footer</el-footer>-->
+    </el-container>
+  </div>
 </template>
 
 <script>
-  import { getUsername } from '@/utils/auth';
-    export default {
-        name: 'mainPage',
-        components: {},
-        data() {
-            return {
-                routerIndex: this.$route.path, //记录首页默认导航，el-menu必备
-            };
-        },
-        computed: {
-          username(){
-                return getUsername();
-            }
-        },
-        methods: {
-            //退出登录
-            logout(){
-                this.$confirm('您是否要退出系统？','提示',{
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$message.success({message: '退出成功！',center: true,duration: 1200, onClose: () => {
-                        localStorage.removeItem('username');
-                        this.$router.push({path: '/login'});
-                    }});
-                }).catch(() => {});
-            }
+  import { getUsername, } from '@/utils/auth';
+  import { changePwd } from '@/api/login';
+  export default {
+    name: 'mainPage',
+    components: {},
+    data() {
+      //密码的验证
+      let passwordRule = (rule,value,callback) => {
+          if (value !== '') {
+            this.$refs.user.validateField('passwordReg');
+          }
+          callback();
+      };
+      //确认密码的验证
+      let passwordRegRule = (rule,value,callback) =>{
+        if(value !== this.user.password){
+          callback(new Error('两次输入密码不一致'));
+        }else{
+          callback();
         }
-    };
+      };
+      return {
+        routerIndex: this.$route.path, //记录首页默认导航，el-menu必备
+        visible: false, //修改密码的显示与隐藏
+        loading: false, //点击修改按钮加载
+        user: {
+          password: '',
+          passwordReg: ''
+        },
+        rules: {
+          password: [
+            {required: true,message: '请输入密码', trigger: 'blur'},
+            {validator: passwordRule, trigger: 'blur'}
+          ],
+          passwordReg: [
+            {required: true,message: '请再次输入密码', trigger: 'blur'},
+            {validator: passwordRegRule, trigger: 'blur'}
+          ]
+        }
+      };
+    },
+    computed: {
+      username(){
+        return getUsername();
+      }
+    },
+    methods: {
+      //弹出框
+      changePwd(){
+        this.visible = true;
+      },
+      //修改密码
+      submitForm(){
+
+        this.$refs.user.validate(valid => {
+          if(valid){
+            this.loading = true;
+            changePwd(this.user).then(res => {
+              if(res.error_code === 0){
+                localStorage.removeItem('username');
+                this.visible = false;
+                this.$message.success({message: '修改密码成功，2秒后跳到登录页面重新登录',center: true,duration: 2000,onClose:() => {
+                  this.$router.push({path: '/login'});
+                }});
+              }else{
+                this.$message.error({message: '修改密码失败！',center: true});
+              }
+              this.loading = false;
+            }).catch(err => {
+              this.loading = false;
+            });
+          }
+        });
+
+      },
+      //表单重置
+      resetForm(){
+        this.$refs['user'].resetFields();
+      },
+      //退出登录
+      logout(){
+        this.$confirm('您是否要退出系统？','提示',{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message.success({message: '退出成功！',center: true,duration: 1200, onClose: () => {
+            localStorage.removeItem('username');
+            this.$router.push({path: '/login'});
+          }});
+        }).catch(() => {});
+      }
+    }
+  };
 </script>
 
 <style lang='scss'>

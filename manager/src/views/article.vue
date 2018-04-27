@@ -24,11 +24,19 @@
               <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="现单价：" prop="price">
+          <el-form-item label="现单价：">
             <el-input-number v-model="dataForm.price" :min="0" :max="99999999"></el-input-number>
-            <span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}{{dataForm.unit_square_x}}/{{dataForm.unit_time}}</span>
+            <!--<span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}{{dataForm.unit_square_x}}/{{dataForm.unit_time}}</span>-->
+            <el-input-number v-model="dataForm.unit_square" :min="0" :max="99999999"></el-input-number>
+            <el-input v-model="dataForm.unit_square_x" class="unit_square"></el-input>
+            <el-input v-model="dataForm.unit_time" class="unit_square"></el-input>
+            <!--<el-select v-model="dataForm.unit_time">
+              <el-option label="天" value="天"></el-option>
+              <el-option label="月" value="月"></el-option>
+              <el-option label="年" value="年"></el-option>
+            </el-select>-->
           </el-form-item>
-          <el-form-item label="单位的值：" prop="unit_square">
+          <!--<el-form-item label="单位的值：" prop="unit_square">
             <el-input-number v-model="dataForm.unit_square" :min="0" :max="99999999"></el-input-number>
           </el-form-item>
           <el-form-item label="单位：" prop="unit_square_x">
@@ -40,13 +48,21 @@
               <el-option label="月" value="月"></el-option>
               <el-option label="年" value="年"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
 
-          <el-form-item label="原单价：" prop="price_original">
+          <el-form-item label="原单价：">
             <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
-            <span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}{{dataForm.unit_square_original_x}}/{{dataForm.unit_time_original}}</span>
+            <!--<span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}{{dataForm.unit_square_original_x}}/{{dataForm.unit_time_original}}</span>-->
+            <el-input-number v-model="dataForm.unit_square_original" :min="0" :max="99999999"></el-input-number>
+            <el-input v-model="dataForm.unit_square_original_x" class="unit_square"></el-input>
+            <el-input v-model="dataForm.unit_time_original" class="unit_square"></el-input>
+            <!--<el-select v-model="dataForm.unit_time_original">
+              <el-option label="天" value="天"></el-option>
+              <el-option label="月" value="月"></el-option>
+              <el-option label="年" value="年"></el-option>
+            </el-select>-->
           </el-form-item>
-          <el-form-item label="原单位的值：" prop="unit_square_original">
+          <!--<el-form-item label="原单位的值：" prop="unit_square_original">
             <el-input-number v-model="dataForm.unit_square_original" :min="0" :max="99999999"></el-input-number>
           </el-form-item>
           <el-form-item label="原单位：" prop="unit_square_original_x">
@@ -58,7 +74,7 @@
               <el-option label="月" value="月"></el-option>
               <el-option label="年" value="年"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
           <el-form-item label="文章图片：">
             <el-upload action=""
                        list-type="picture-card"
@@ -101,10 +117,15 @@
         <el-select v-model="classify_search" size="small" placeholder="选择分类">
           <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
+        <el-select v-model="is_open" size="small" placeholder="选择是否开启">
+          <el-option :value="2" label="全部"></el-option>
+          <el-option :value="1" label="开启"></el-option>
+          <el-option :value="0" label="关闭"></el-option>
+        </el-select>
 
         <el-button type="primary" size="small" @click="getTableLists" icon="el-icon-search">搜索</el-button>
 
-        <el-switch v-model="is_search" @change="is_searchChange" active-text="开启查询" inactive-text="关闭查询"></el-switch>
+        <!--<el-switch v-model="is_search" @change="is_searchChange" active-text="开启查询" inactive-text="关闭查询"></el-switch>-->
 
       </div>
       <el-button type="primary" @click="addRow" size="small">添 加</el-button>
@@ -126,12 +147,25 @@
         <el-table-column prop="sort_index" label="排序权重" width="120" sortable="custom"></el-table-column>
         <el-table-column prop="price" label="现单价" width="150">
           <template slot-scope="scope">
-            <p>￥{{scope.row.price}}/{{scope.row.unit_square}}{{scope.row.unit_square_x}}/{{scope.row.unit_time}}</p>
+            <p>
+              <span v-if="scope.row.price">￥{{scope.row.price}}/</span>
+              <span v-if="scope.row.unit_square">{{scope.row.unit_square}}</span>
+              <span v-if="scope.row.unit_square_x">{{scope.row.unit_square_x}}</span>
+              <span v-if="scope.row.unit_time">/{{scope.row.unit_time}}</span>
+            </p>
           </template>
         </el-table-column>
         <el-table-column prop="price_original" label="原单价" width="150">
           <template slot-scope="scope">
-            <p>￥{{scope.row.price_original}}/{{scope.row.unit_square_original}}{{scope.row.unit_square_original_x}}/{{scope.row.unit_time_original}}</p>
+
+            <p>
+              <span v-if="scope.row.price_original">￥{{scope.row.price_original}}/</span>
+              <span v-if="scope.row.unit_square_original">{{scope.row.unit_square_original}}</span>
+              <span v-if="scope.row.unit_square_original_x">{{scope.row.unit_square_original_x}}</span>
+              <span v-if="scope.row.unit_time_original">/{{scope.row.unit_time_original}}</span>
+
+              <!--￥{{scope.row.price_original}}/{{scope.row.unit_square_original}}{{scope.row.unit_square_original_x}}/{{scope.row.unit_time_original}}-->
+            </p>
           </template>
         </el-table-column>
         <!--<el-table-column prop="content" label="详情" width="200"></el-table-column>-->
@@ -202,13 +236,13 @@ export default {
         uid: null,
         phone: "",
         is_open: true,
-        sort_index: 0,
-        price: 1,
-        unit_square: 1,
+        sort_index: 1,
+        price: 0,
+        unit_square: 0,
         unit_square_x: '平方米',
         unit_time: "月", //现单价
-        price_original: 1,
-        unit_square_original: 1,
+        price_original: 0,
+        unit_square_original: 0,
         unit_square_original_x: '平方米',
         unit_time_original: "月", //原单价
         //images: [{name: 1, url: 'http://123.207.246.238:82/server/public/images/articleImg1.png'}],
@@ -226,6 +260,7 @@ export default {
       limit: 10, //一页多少条记录
       search: "", //搜索关键字
       classify_search: '', //按照分类查询
+      is_open: 2, //2代表全部，1代表开启，0代表关闭
       sort: "", //升序为ascending，降序为descending
       sortField: "", //进行排序的字段，默认id排序
       is_search: true, //是否开启查询项
@@ -376,6 +411,7 @@ export default {
         is_search: this.is_search,
         search: this.search,
         classify_search: this.classify_search,
+        is_open: this.is_open,
         page: this.page,
         limit: this.limit,
         sort: this.sort,
@@ -407,6 +443,7 @@ export default {
     getClassifyLists() {
       let params = {
         search: "",
+        is_open: '2',
         page: 1,
         limit: 1000
       };
@@ -544,12 +581,12 @@ export default {
               formData.append('phone', params.phone);
               formData.append('is_open', params.is_open);
               formData.append('sort_index', params.sort_index);
-              formData.append("price", params.price);
-              formData.append("unit_square", params.unit_square);
+              formData.append("price", params.price === undefined ? 0 : params.price );
+              formData.append("unit_square", params.unit_square === undefined ? 0 : params.unit_square );
               formData.append("unit_square_x", params.unit_square_x);
               formData.append("unit_time", params.unit_time);
-              formData.append("price_original", params.price_original);
-              formData.append("unit_square_original", params.unit_square_original);
+              formData.append("price_original", params.price_original === undefined ? 0 : params.price_original );
+              formData.append("unit_square_original", params.unit_square_original === undefined ? 0 : params.unit_square_original );
               formData.append("unit_square_original_x", params.unit_square_original_x);
               formData.append("unit_time_original", params.unit_time_original);
               formData.append("content", params.content);
@@ -619,13 +656,13 @@ export default {
           uid: null,
           phone: "",
           is_open: true,
-          sort_index: 0,
-          price: 1,
-          unit_square: 1,
+          sort_index: 1,
+          price: 0,
+          unit_square: 0,
           unit_square_x: '平方米',
           unit_time: "月", //现单价
-          price_original: 1,
-          unit_square_original: 1,
+          price_original: 0,
+          unit_square_original: 0,
           unit_square_original_x: '平方米',
           unit_time_original: "月", //原单价
           images: [],

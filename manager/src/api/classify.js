@@ -26,6 +26,7 @@ export function create(data) {
   formData.append('file', data.icon);
   formData.append('bg_color', data.bg_color);
   formData.append('is_open', data.is_open);
+  formData.append('sort_index', data.sort_index);
   //console.log(formData.getAll('file'));
 
   return request({
@@ -56,6 +57,7 @@ export function update(data) {
   formData.append('file', data.icon);
   formData.append('bg_color', data.bg_color);
   formData.append('is_open', data.is_open);
+  formData.append('sort_index', data.sort_index);
 
   //console.log(formData.getAll('file'));
 

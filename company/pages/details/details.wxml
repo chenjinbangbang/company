@@ -9,8 +9,18 @@
 
 <view class='details'>
   <view class='price'>
-    <text class='price1'>￥{{details.price}}/{{details.unit_square}}{{details.unit_square_x}}/{{details.unit_time}}</text>
-    <text class='price2'>￥{{details.price_original}}/{{details.unit_square_original}}{{details.unit_square_original_x}}/{{details.unit_time_original}}</text>
+    <view class='price1'>
+      <text wx:if="{{details.price}}">￥{{details.price}}/</text>
+      <text wx:if="{{details.unit_square}}">{{details.unit_square}}</text>
+      <text wx:if="{{details.unit_square_x}}">{{details.unit_square_x}}</text>
+      <text wx:if="{{details.unit_time}}">/{{details.unit_time}}</text>
+    </view>
+    <view class='price2'>
+      <text wx:if="{{details.price_original}}">￥{{details.price_original}}/</text>
+      <text wx:if="{{details.unit_square_original}}">{{details.unit_square_original}}</text>
+      <text wx:if="{{details.unit_square_original_x}}">{{details.unit_square_original_x}}</text>
+      <text wx:if="{{details.unit_time_original}}">/{{details.unit_time_original}}</text>
+    </view>
   </view>
   <view class='title'>{{details.title}}</view>
   <view class='content'>

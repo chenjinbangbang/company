@@ -14,7 +14,8 @@ swiper{ height:200px;}
 
 .details .price {
   height: 100rpx;
-  line-height: 100rpx;
+  display:flex;
+  align-items:center;
 }
 
 .details .price .price1 {
@@ -27,6 +28,7 @@ swiper{ height:200px;}
 .details .price .price2 {
   font-size: 32rpx;
   text-decoration: line-through;
+  margin-top:10rpx;
 }
 
 .details .title {

@@ -44,7 +44,7 @@ router.get('/classifyList', async (req, res) => {
   //查询分页
   const selectFn = () => {
     return new Promise((resolve,reject) => {
-      let sql = `select * from classifys where is_open = 1`;
+      let sql = `select * from classifys where is_open = 1 order by sort_index`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`获取分类列表失败：${err.message}`);
@@ -72,8 +72,19 @@ router.get('/classifyList', async (req, res) => {
 router.get('/list', async (req, res) => {
 
   let search = req.query.search;
+  let is_open = Number(req.query.is_open);
   let page = Number(req.query.page);
   let limit = Number(req.query.limit);
+
+  //是否开启查询项
+  let is_openVal = ``;
+  if(is_open !== 2){
+    is_openVal =  `and is_open = ${is_open}`;
+  }
+
+  //拼接查询
+  let searchVal =  `where name like '%${search}%' ${is_openVal}`;
+
 
   //排序，判断排序是否存在
   let orderbyVal = ``;
@@ -86,7 +97,7 @@ router.get('/list', async (req, res) => {
   //计算总数
   const totalFn = () => {
     return new Promise((resolve,reject) => {
-      let sql = `select count(*) total from classifys where name like '%${search}%'`;
+      let sql = `select count(*) total from classifys ${searchVal}`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`计算分类总数失败：${err.message}`);
@@ -101,7 +112,7 @@ router.get('/list', async (req, res) => {
   //查询分页
   const selectFn = () => {
     return new Promise((resolve,reject) => {
-      let sql = `select * from classifys where name like '%${search}%' ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
+      let sql = `select * from classifys ${searchVal} ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`获取分类列表失败：${err.message}`);
@@ -150,7 +161,7 @@ router.post('/create', upload.single('file'), (req, res) => {
   //console.log(file);
 
   let url = `/static/images/${req.file.filename}`;
-  let sql = `insert into classifys (name,icon,bg_color,is_open,create_time,update_time) values ('${req.body.name}','${url}','${req.body.bg_color}',${req.body.is_open},now(),now())`;
+  let sql = `insert into classifys (name,icon,bg_color,is_open,sort_index,create_time,update_time) values ('${req.body.name}','${url}','${req.body.bg_color}',${req.body.is_open},${req.body.sort_index},now(),now())`;
 
   connection.query(sql, (err, result) => {
     if (err) {
@@ -199,9 +210,9 @@ router.post('/update', upload.single('file'), (req, res) => {
   let sql;
   if (req.file) { //有文件更新
     let url = `/static/images/${req.file.filename}`;
-    sql = `update classifys set name = '${req.body.name}',icon = '${url}',bg_color = '${req.body.bg_color}',is_open = ${req.body.is_open},update_time = now() where id = ${req.body.id}`;
+    sql = `update classifys set name = '${req.body.name}',icon = '${url}',bg_color = '${req.body.bg_color}',is_open = ${req.body.is_open},sort_index = ${req.body.sort_index},update_time = now() where id = ${req.body.id}`;
   } else { //没有文件更新，icon不用更新
-    sql = `update classifys set name = '${req.body.name}',bg_color = '${req.body.bg_color}',is_open = ${req.body.is_open},update_time = now() where id = ${req.body.id}`;
+    sql = `update classifys set name = '${req.body.name}',bg_color = '${req.body.bg_color}',is_open = ${req.body.is_open},sort_index = ${req.body.sort_index},update_time = now() where id = ${req.body.id}`;
   }
 
 

@@ -14,3 +14,15 @@ export function login(data){
     data
   });
 }
+
+//修改密码
+export function changePwd(data){
+
+  let password = md5(data.password.trim());
+
+  return request({
+    url: '/users/changePwd',
+    method: 'post',
+    data: { password }
+  });
+}
