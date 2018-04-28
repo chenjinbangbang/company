@@ -9,7 +9,7 @@ swiper{ height:200px;}
 }
 
 .details {
-  margin-bottom:100rpx;
+  padding-bottom:100rpx;
 }
 
 .details .price {

@@ -15,12 +15,12 @@
             <el-color-picker v-model="dataForm.bg_color"></el-color-picker>
           </el-form-item>
           <el-form-item label="图标：" prop="icon">
-            <div class="icon" @click="fileClick">
+            <div class="icon" @click="fileClick" :style="{'background-color': dataForm.bg_color}">
               <input type="file" ref="file" @change="fileUpload" style="display:none;">
               <img :src="dataForm.icon" v-if="dataForm.icon" alt="">
               <i class="el-icon-plus" v-else></i>
             </div>
-            <p class="red">图标尺寸宽高比建议为1:1，如100*100,200*200</p>
+            <p class="upload_tip">只能上传jpg/jpeg/png/gif格式的图片，不超过500kb，图标尺寸宽高比建议为1:1，如100*100,200*200</p>
           </el-form-item>
           <el-form-item label="是否开启：" prop="is_open">
             <el-switch v-model="dataForm.is_open"></el-switch>
@@ -57,7 +57,7 @@
         <el-table-column prop="name" label="名称" min-width="150" sortable="custom"></el-table-column>
         <el-table-column prop="icon" label="图标" width="100">
           <template slot-scope="scope">
-            <img :src="scope.row.icon" alt="" class="iconImg">
+            <div :style="{'background-color': scope.row.bg_color}" class="iconImg"><img :src="scope.row.icon" alt=""></div>
           </template>
         </el-table-column>
         <el-table-column prop="bg_color" label="背景色" width="100">
@@ -122,7 +122,14 @@ export default {
       id: null, //记录id，开启关闭功能需要
       tableLists: [],
       //表单数据
-      dataForm: { id: null, name: "", icon: "",bg_color: '', is_open: true,sort_index: 1 },
+      dataForm: {
+        id: null,
+        name: "",
+        icon: "",
+        bg_color: "",
+        is_open: true,
+        sort_index: 1
+      },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
       editId: 0, //点击修改的是哪个id
@@ -139,7 +146,9 @@ export default {
       //表单验证
       rules: {
         name: [{ required: true, message: "请输入名称！", trigger: "blur" }],
-        bg_color: [{ required: true, message: "请选择背景色！", trigger: "blur" }],
+        bg_color: [
+          { required: true, message: "请选择背景色！", trigger: "blur" }
+        ],
         icon: [{ required: true, message: "请上传图标！", trigger: "blur" }]
       }
     };
@@ -155,11 +164,30 @@ export default {
     },
     //文件上传
     fileUpload() {
-      this.iconFile = this.$refs.file.files[0];
+      //console.log(this.$refs.file.files);
 
-      const windowURL = window.URL || window.webkitUrl;
+      if (this.$refs.file.files.length > 0) {
+        this.iconFile = this.$refs.file.files[0];
 
-      this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
+        if (!/jpg|jpeg|png|gif/.test(this.iconFile.type)) {
+          this.$message.warning({
+            message: "只能上传jpg/jpeg/png/gif格式的图片",
+            center: true
+          });
+          return false;
+        }
+        if (this.iconFile.size / 1024 / 1024 > 1) {
+          this.$message.warning({ message: "图片不能大于1M", center: true });
+          return false;
+        }
+        // if(this.iconFile.size / 1024 < 10){
+        //   this.$message.warning({ message: "图片不能少于10kb", center: true });
+        //   return false;
+        // }
+
+        const windowURL = window.URL || window.webkitUrl;
+        this.dataForm.icon = windowURL.createObjectURL(this.iconFile);
+      }
     },
 
     //改变背景色
@@ -252,23 +280,23 @@ export default {
     },
     //保存数据
     saveForm() {
-//密码的验证
-      let passwordRule = (rule,value,callback) => {
+      //密码的验证
+      let passwordRule = (rule, value, callback) => {
         const valReg = /^[\w-]{6,18}$/; //6-18位的字母/数字/_/-组成
-        if(!valReg.test(value)){
-          callback(new Error('密码必须为6-18位的字母/数字/_/-组成'));
-        }else {
-          if (value !== '') {
-            this.$refs.user.validateField('passwordReg');
+        if (!valReg.test(value)) {
+          callback(new Error("密码必须为6-18位的字母/数字/_/-组成"));
+        } else {
+          if (value !== "") {
+            this.$refs.user.validateField("passwordReg");
           }
           callback();
         }
       };
       //确认密码的验证
-      let passwordRegRule = (rule,value,callback) =>{
-        if(value !== this.user.password){
-          callback(new Error('两次输入密码不一致'));
-        }else{
+      let passwordRegRule = (rule, value, callback) => {
+        if (value !== this.user.password) {
+          callback(new Error("两次输入密码不一致"));
+        } else {
           callback();
         }
       };
@@ -353,7 +381,14 @@ export default {
         //解决快速点击2次时，表单已重置修改信息为空的问题
         //两个一起解决重置问题
         this.$refs.dataForm.resetFields();
-        this.dataForm = { id: null, name: "", icon: "",bg_color: '',is_open: true,sort_index: 1, };
+        this.dataForm = {
+          id: null,
+          name: "",
+          icon: "",
+          bg_color: "",
+          is_open: true,
+          sort_index: 1
+        };
         this.visible = false;
       }, 100);
     },
@@ -377,15 +412,23 @@ export default {
 .classify {
   //图标
   .iconImg {
-    width: 30px;
-    cursor:pointer;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    align-items: center;
+    img {
+      width: 30px;
+    }
   }
   //背景色
-  .bg_color{
+  .bg_color {
     width: 20px;
     height: 20px;
-    margin:auto;
-    cursor:pointer;
+    margin: auto;
+    cursor: pointer;
   }
 
   .icon {

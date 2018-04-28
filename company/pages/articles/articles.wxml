@@ -10,9 +10,12 @@
     </view>
     <view class='articles-detail'>
       <view class='title'>{{item.title}}</view>
-      <view class='price'>￥{{item.price}}/{{item.unit_square}}{{item.unit_square_x}}/{{item.unit_time}}</view>
+      <view class='price' wx:if="{{item.price || item.unit_square || item.unit_square_x || item.unit_time}}">
+        <text wx:if="{{item.price}}">￥{{item.price}}/</text>
+        <text wx:if="{{item.unit_square}}">{{item.unit_square}}</text>
+        <text wx:if="{{item.unit_square_x}}">{{item.unit_square_x}}</text>
+        <text wx:if="{{item.unit_time}}">/{{item.unit_time}}</text>
+      </view>
     </view>
   </view>
 </view>
-
-

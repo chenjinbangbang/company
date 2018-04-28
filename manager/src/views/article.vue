@@ -1,5 +1,5 @@
 <template>
-  <div class="classify">
+  <div class="articles">
 
     <div class="dataForm">
       <el-dialog :title="operate === 0 ? '添加文章' : '修改文章'" :visible.sync="visible" :closeOnClickModal="false" :beforeClose="handleClose">
@@ -11,25 +11,37 @@
             <el-input v-model="dataForm.title" placeholder="请输入标题"></el-input>
           </el-form-item>
           <el-form-item label="联系电话：" prop="phone">
-            <el-input v-model="dataForm.phone" placeholder="请输入电话号码"></el-input>
+            <el-input v-model="dataForm.phone" placeholder="请输入电话号码或固定电话号码"></el-input>
           </el-form-item>
-          <el-form-item label="是否开启：" prop="is_open">
+          <el-form-item label="是否开启：" prop="uid">
+
             <el-switch v-model="dataForm.is_open"></el-switch>
+            <span class="props">排序权重：</span>
+            <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
+            <span class="props">分类：</span>
+            <el-select v-model="dataForm.uid">
+              <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+
           </el-form-item>
-          <el-form-item label="排序权重：" prop="sort_index">
+          <!-- <el-form-item label="排序权重：" prop="sort_index">
             <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
           </el-form-item>
           <el-form-item label="分类：" prop="uid">
             <el-select v-model="dataForm.uid">
               <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="现单价：">
-            <el-input-number v-model="dataForm.price" :min="0" :max="99999999"></el-input-number>
+            
             <!--<span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}{{dataForm.unit_square_x}}/{{dataForm.unit_time}}</span>-->
+            <span class="props">单价：</span>
+            <el-input-number v-model="dataForm.price" :min="0" :max="99999999"></el-input-number>
+            <span class="props">单位值：</span>
             <el-input-number v-model="dataForm.unit_square" :min="0" :max="99999999"></el-input-number>
-            <el-input v-model="dataForm.unit_square_x" class="unit_square"></el-input>
-            <el-input v-model="dataForm.unit_time" class="unit_square"></el-input>
+            <el-input v-model="dataForm.unit_square_x" class="unit_square" placeholder="请输入单位"></el-input>
+            <el-input v-model="dataForm.unit_time" class="unit_square" placeholder="请输入时间单位"></el-input>
+
             <!--<el-select v-model="dataForm.unit_time">
               <el-option label="天" value="天"></el-option>
               <el-option label="月" value="月"></el-option>
@@ -51,11 +63,14 @@
           </el-form-item>-->
 
           <el-form-item label="原单价：">
-            <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
+            
             <!--<span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}{{dataForm.unit_square_original_x}}/{{dataForm.unit_time_original}}</span>-->
+            <span class="props">单价：</span>
+            <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
+            <span class="props">单位值：</span>
             <el-input-number v-model="dataForm.unit_square_original" :min="0" :max="99999999"></el-input-number>
-            <el-input v-model="dataForm.unit_square_original_x" class="unit_square"></el-input>
-            <el-input v-model="dataForm.unit_time_original" class="unit_square"></el-input>
+            <el-input v-model="dataForm.unit_square_original_x" class="unit_square" placeholder="请输入单位"></el-input>
+            <el-input v-model="dataForm.unit_time_original" class="unit_square" placeholder="请输入时间单位"></el-input>
             <!--<el-select v-model="dataForm.unit_time_original">
               <el-option label="天" value="天"></el-option>
               <el-option label="月" value="月"></el-option>
@@ -90,7 +105,7 @@
                        :on-error="handleError"
             >
               <i class="el-icon-plus"></i>
-              <div slot="tip" class="el-upload__tip red">至少上传1张，最多上传5张图片，只能上传jpg/jpeg/png/gif格式的图片，不超过500kb且不少于10kb，尺寸宽高比建议为3:2，如600*400。900*600,</div>
+              <div slot="tip" class="upload_tip">至少上传1张，最多上传5张图片，只能上传jpg/jpeg/png/gif格式的图片，不超过3M且不少于10kb，尺寸宽高比建议为3:2，如600*400。900*600,</div>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
@@ -208,14 +223,15 @@ import {
 import { getClassifyLists } from "@/api/classify";
 import Tinymce from "@/components/Tinymce";
 export default {
-  name: "classify",
+  name: "articles",
   components: { Tinymce },
   data() {
     //手机号码验证
     let phoneRule = (rule, value, callback) => {
-      let valReg = /^1[34578]\d{9}$/;
+      //let valReg = /^1[34578]\d{9}$/;
+      let valReg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$|^0\d{2,3}-?\d{7,8}$/;
       if (!valReg.test(value)) {
-        callback(new Error('输入的电话号码格式有误！'));
+        callback(new Error('输入的电话号码或固定电话号码格式有误！'));
       } else {
         callback();
       }
@@ -236,15 +252,15 @@ export default {
         uid: null,
         phone: "",
         is_open: true,
-        sort_index: 1,
-        price: 0,
-        unit_square: 0,
-        unit_square_x: '平方米',
-        unit_time: "月", //现单价
-        price_original: 0,
-        unit_square_original: 0,
-        unit_square_original_x: '平方米',
-        unit_time_original: "月", //原单价
+        sort_index: null,
+        price: null,
+        unit_square: null,
+        unit_square_x: '',
+        unit_time: "", //现单价
+        price_original: null,
+        unit_square_original: null,
+        unit_square_original_x: '',
+        unit_time_original: "", //原单价
         //images: [{name: 1, url: 'http://123.207.246.238:82/server/public/images/articleImg1.png'}],
         images: [],
         content: ""
@@ -269,7 +285,7 @@ export default {
         title: { required: true, message: "请输入标题！", trigger: "blur" },
         uid: { required: true, message: "请选择分类！", trigger: "change" },
         phone: [
-          { required: true, message: "请选择电话号码！", trigger: "blur" },
+          { required: true, message: "请输入电话号码或固定电话号码！", trigger: "blur" },
           {
             validator: phoneRule,
             trigger: "blur"
@@ -370,8 +386,8 @@ export default {
         });
         return false;
       }
-      if (file.size / 1024 > 500) {
-        this.$message.warning({ message: "图片不能大于500kb", center: true });
+      if (file.size / 1024 / 1024 > 3) {
+        this.$message.warning({ message: "图片不能大于3M", center: true });
         return false;
       }
       if(file.size / 1024 < 10){
@@ -385,7 +401,7 @@ export default {
     //文件超出个数限制时的钩子
     handleExceed() {
       this.$message.warning({
-        message: "你最多只能上传5张图片图片不能大于500kb",
+        message: "你最多只能上传5张图片图片不能大于3M",
         center: true
       });
     },
@@ -580,13 +596,13 @@ export default {
               formData.append("uid", params.uid);
               formData.append('phone', params.phone);
               formData.append('is_open', params.is_open);
-              formData.append('sort_index', params.sort_index);
-              formData.append("price", params.price === undefined ? 0 : params.price );
-              formData.append("unit_square", params.unit_square === undefined ? 0 : params.unit_square );
+              formData.append('sort_index', params.sort_index ? null : params.sort_index);
+              formData.append("price", params.price === undefined ? null : params.price );
+              formData.append("unit_square", params.unit_square === undefined ? null : params.unit_square );
               formData.append("unit_square_x", params.unit_square_x);
               formData.append("unit_time", params.unit_time);
-              formData.append("price_original", params.price_original === undefined ? 0 : params.price_original );
-              formData.append("unit_square_original", params.unit_square_original === undefined ? 0 : params.unit_square_original );
+              formData.append("price_original", params.price_original === undefined ? null : params.price_original );
+              formData.append("unit_square_original", params.unit_square_original === undefined ? null : params.unit_square_original );
               formData.append("unit_square_original_x", params.unit_square_original_x);
               formData.append("unit_time_original", params.unit_time_original);
               formData.append("content", params.content);
@@ -656,15 +672,15 @@ export default {
           uid: null,
           phone: "",
           is_open: true,
-          sort_index: 1,
-          price: 0,
-          unit_square: 0,
-          unit_square_x: '平方米',
-          unit_time: "月", //现单价
-          price_original: 0,
-          unit_square_original: 0,
-          unit_square_original_x: '平方米',
-          unit_time_original: "月", //原单价
+          sort_index: null,
+          price: null,
+          unit_square: null,
+          unit_square_x: '',
+          unit_time: "", //现单价
+          price_original: null,
+          unit_square_original: null,
+          unit_square_original_x: '',
+          unit_time_original: "", //原单价
           images: [],
           content: ""
         };
@@ -688,19 +704,23 @@ export default {
 
 
 <style lang='scss'>
-.classify {
+.articles {
   .el-dialog {
-    width: 80%;
+    width: 1024px;
     .el-upload__tip {
     }
     .price {
       font-size: 16px;
     }
-    .unit_square{ width:200px;}
+    .unit_square{ width:160px;}
   }
   .iconImg {
     width: 30px;
   }
+  .props{
+    margin-left:10px;
+  }
+
 
   .icon {
     width: 150px;

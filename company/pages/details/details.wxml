@@ -8,7 +8,7 @@
 </swiper>
 
 <view class='details'>
-  <view class='price'>
+  <view class='price' wx:if="{{details.price || details.unit_square || details.unit_square_x || details.unit_time || details.price_original || details.unit_square_original || details.unit_square_original_x || details.unit_time_original}}">
     <view class='price1'>
       <text wx:if="{{details.price}}">￥{{details.price}}/</text>
       <text wx:if="{{details.unit_square}}">{{details.unit_square}}</text>
@@ -22,6 +22,7 @@
       <text wx:if="{{details.unit_time_original}}">/{{details.unit_time_original}}</text>
     </view>
   </view>
+
   <view class='title'>{{details.title}}</view>
   <view class='content'>
     <import src="/wxParse/wxParse.wxml"></import>
