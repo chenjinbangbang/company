@@ -14,6 +14,7 @@
  **/
 import showdown from './showdown.js';
 import HtmlToJson from './html2json.js';
+
 /**
  * 配置及公有属性
  **/
@@ -54,7 +55,7 @@ function wxParse(bindName = 'wxParseData', type='html', data='<div class="color:
 // 图片点击事件
 function wxParseImgTap(e) {
   var that = this;
-  var nowImgUrl = e.target.dataset.src;
+  var nowImgUrl = 'http://www.mjpai.cn:82' + e.target.dataset.src;
   var tagFrom = e.target.dataset.from;
   if (typeof (tagFrom) != 'undefined' && tagFrom.length > 0) {
     wx.previewImage({

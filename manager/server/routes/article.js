@@ -74,7 +74,7 @@ router.get('/articleList', async (req, res) => {
 
 //获取文章列表
 router.get('/list', async (req, res) => {
-  console.log(req.query);
+  //console.log(req.query);
 
   //let is_search = req.query.is_search;
   let search = req.query.search;
@@ -125,7 +125,7 @@ router.get('/list', async (req, res) => {
     return new Promise((resolve, reject) => {
       let sql = `select a.id,b.name,a.title,a.phone,a.is_open,a.sort_index,a.price,a.unit_square,a.unit_square_x,a.unit_time,a.price_original,a.unit_square_original,a.unit_square_original_x,a.unit_time_original,
       a.images,a.content,a.create_time,a.update_time from articles a left join classifys b on a.uid = b.id ${searchVal} ${orderbyVal} limit ${(page - 1) * limit},${limit}`;
-      console.log(sql);
+      //console.log(sql);
       connection.query(sql, (err, result) => {
         if (err) {
           console.log(`获取文章列表失败：${err.message}`);
@@ -176,21 +176,18 @@ router.post('/create', upload.array('files', 5), (req, res) => {
   //处理图片
   let imgVal = [];
   req.files.forEach((item, index) => {
-    if (index < req.files.length - 1) {
-      imgVal.push(`/static/images/${item.filename},`);
-    } else {
-      imgVal.push(`/static/images/${item.filename}`);
-    }
+    imgVal.push(`/static/images/${item.filename}`);
   });
+
   imgVal = imgVal.join(',');
   console.log(imgVal);
 
   //let url = `/static/images/${req.file.filename}`;
-  let sql = `insert into articles (title,uid,phone,is_open,sort_index,price,unit_square,unit_square_x,unit_time,price_original,unit_square_original,unit_square_original_x,unit_time_original,images,content,create_time,update_time) values 
+  let sql = `insert into articles (title,uid,phone,is_open,sort_index,price,unit_square,unit_square_x,unit_time,price_original,unit_square_original,unit_square_original_x,unit_time_original,images,content,create_time,update_time) values
   ('${params.title}',${params.uid},'${params.phone}',${params.is_open},${params.sort_index},${params.price},${params.unit_square},'${params.unit_square_x}','${params.unit_time}',
   ${params.price_original},${params.unit_square_original},'${params.unit_square_original_x}','${params.unit_time_original}','${imgVal}','${params.content}',now(),now())`;
 
-  console.log(sql);
+  //console.log(sql);
 
   connection.query(sql, (err, result) => {
     if (err) {
@@ -300,6 +297,23 @@ router.post('/delete', (req, res) => {
       data: '删除文章成功！'
     });
 
+  });
+
+});
+
+//单独把富文本的图片上传到服务器
+router.post('/uploadImg',upload.array('files',50),(req,res) => {
+  console.log(req.files);
+
+//处理图片
+  let imgVal = [];
+  req.files.forEach((item, index) => {
+    imgVal.push(`/static/images/${item.filename}`);
+  });
+
+  res.json({
+    error_code: 0,
+    data: imgVal
   });
 
 });

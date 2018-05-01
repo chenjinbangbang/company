@@ -12,6 +12,7 @@ Page({
     host: '', //ip地址
     server: '', //服务地址
 
+    id: null, //文章id
     details: {
       // imgUrls: ['/images/articleImg1.png', '/images/articleImg2.png', '/images/articleImg1.png', '/images/articleImg2.png'],
       // price: '￥103.50/方',
@@ -31,9 +32,12 @@ Page({
       server: app.globalData.server,  //设置服务地址
     });
 
-    //console.log(options.id);
+    console.log(options.id);
     if (options.id) {
-      this.getDetails(options.id);
+      this.setData({
+        id: options.id
+      });
+      this.getDetails();
     }
   },
 
@@ -94,10 +98,12 @@ Page({
     });
   },
   //根据文章id，获取文章详情
-  getDetails(id) {
+  getDetails() {
     let self = this;
+    let data = {id: this.data.id};
     wx.request({
-      url: `${self.data.server}/api/article/getInfo?id=${id}`,
+      url: `${self.data.server}/api/article/getInfo`,
+      data,
       method: 'get',
       success(res) {
         res = res.data;
@@ -116,10 +122,16 @@ Page({
           let article = self.data.details.content;
           WxParse.wxParse('article', 'html', article, self, 5);
 
+          wx.stopPullDownRefresh();
         }
-
-
       }
     });
-  }
+  },
+
+  //下拉刷新，重新加载
+  onPullDownRefresh() {
+    //console.log('下拉刷新');
+    this.getDetails();
+  },
+
 })

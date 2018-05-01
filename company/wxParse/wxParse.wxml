@@ -18,8 +18,11 @@
 </template>
 
 <template name="wxParseImg">
-  <image class="{{item.classStr}} wxParse-{{item.tag}}" data-from="{{item.from}}" data-src="{{item.attr.src}}" data-idx="{{item.imgIndex}}" src="{{item.attr.src}}" mode="aspectFit" bindload="wxParseImgLoad" bindtap="wxParseImgTap" mode="widthFix" style="width:{{item.width}}px;"
+{{getApp().globalData.host}}
+  <image class="{{item.classStr}} wxParse-{{item.tag}}" data-from="{{item.from}}" data-src="{{item.attr.src}}" data-idx="{{item.imgIndex}}" src="http://www.mjpai.cn:82{{item.attr.src}}" mode="aspectFit" bindload="wxParseImgLoad" mode="widthFix" style="width:{{item.width}}px;"
+  
   />
+  <!-- bindtap="wxParseImgTap"  -->
 </template>
 
 <template name="WxEmojiView">

@@ -95,8 +95,17 @@ Page({
             lists: res.data.results
           });
           //console.log(self.data.lists);
+
+          wx.stopPullDownRefresh();
         }
       }
     });
-  }
+  },
+
+  //下拉刷新，重新加载
+  onPullDownRefresh() {
+    //console.log('下拉刷新');
+    this.getLists();
+  },
+
 })

@@ -26,7 +26,7 @@ export function create(data) {
   formData.append('uid', data.uid);
   formData.append('phone', data.phone);
   formData.append('is_open', data.is_open);
-  formData.append('sort_index', data.sort_index ? null : data.sort_index);
+  formData.append('sort_index', data.sort_index === undefined ? null : data.sort_index);
   formData.append('price', data.price === undefined ? null : data.price );
   formData.append('unit_square', data.unit_square === undefined ? null : data.unit_square );
   formData.append('unit_square_x', data.unit_square_x);
@@ -85,31 +85,19 @@ export function deletes(data) {
   });
 }
 
-function objectToFormData(obj, form, namespace) {
-  const fd = form || new FormData();
-  let formKey;
+//单独把富文本的图片上传到服务器
+export function uploadImg(data) {
 
-  for (var property in obj) {
-    if (obj.hasOwnProperty(property)) {
-      let key = Array.isArray(obj) ? '[]' : `[${property}]`;
-      if (namespace) {
-        formKey = namespace + key;
-      } else {
-        formKey = property;
-      }
+  let formData = new FormData();
+  //文件处理
+  data.forEach(item => {
+    formData.append('files',item.raw);
+  });
+  console.log(formData.getAll("files"));
 
-      // if the property is an object, but not a File, use recursivity.
-      if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
-        objectToFormData(obj[property], fd, formKey);
-      } else {
-
-        // if it's a string or a File object
-        fd.append(formKey, obj[property]);
-      }
-
-    }
-  }
-
-  return fd;
-
+  return request({
+    url: '/article/uploadImg',
+    method: 'post',
+    data: formData
+  });
 }

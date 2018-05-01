@@ -13,18 +13,18 @@
           <el-form-item label="联系电话：" prop="phone">
             <el-input v-model="dataForm.phone" placeholder="请输入电话号码或固定电话号码"></el-input>
           </el-form-item>
-          <el-form-item label="是否开启：" prop="uid">
+          <el-form-item label="分类：" prop="uid">
 
-            <el-switch v-model="dataForm.is_open"></el-switch>
-            <span class="props">排序权重：</span>
-            <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
-            <span class="props">分类：</span>
             <el-select v-model="dataForm.uid">
               <el-option v-for="item in classifyLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
+            <span class="props">排序顺序：</span>
+            <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
+            <span class="props">是否开启：</span>
+            <el-switch v-model="dataForm.is_open"></el-switch>
 
           </el-form-item>
-          <!-- <el-form-item label="排序权重：" prop="sort_index">
+          <!-- <el-form-item label="排序顺序：" prop="sort_index">
             <el-input-number v-model="dataForm.sort_index" :min="0" :max="99999999"></el-input-number>
           </el-form-item>
           <el-form-item label="分类：" prop="uid">
@@ -33,7 +33,7 @@
             </el-select>
           </el-form-item> -->
           <el-form-item label="现单价：">
-            
+
             <!--<span class="red price">￥{{dataForm.price}}/{{dataForm.unit_square}}{{dataForm.unit_square_x}}/{{dataForm.unit_time}}</span>-->
             <span class="props">单价：</span>
             <el-input-number v-model="dataForm.price" :min="0" :max="99999999"></el-input-number>
@@ -63,7 +63,7 @@
           </el-form-item>-->
 
           <el-form-item label="原单价：">
-            
+
             <!--<span class="red price" style="text-decoration: line-through;">￥{{dataForm.price_original}}/{{dataForm.unit_square_original}}{{dataForm.unit_square_original_x}}/{{dataForm.unit_time_original}}</span>-->
             <span class="props">单价：</span>
             <el-input-number v-model="dataForm.price_original" :min="0" :max="99999999"></el-input-number>
@@ -93,13 +93,14 @@
           <el-form-item label="文章图片：">
             <el-upload action=""
                        list-type="picture-card"
+                       :multiple="true"
+                       :limit="5"
                        :file-list="dataForm.images"
+                       :on-exceed="handleExceed"
+                       :before-upload="handleBeforeUpload"
                        :http-request="submitUpload"
                        :on-success="handleSuccess"
                        :on-preview="handlePictureCardPreview"
-                       :before-upload="handleBeforeUpload"
-                       :limit="5"
-                       :on-exceed="handleExceed"
                        :on-change="handleChange"
                        :on-remove="handleRemove"
                        :on-error="handleError"
@@ -114,7 +115,6 @@
           <el-form-item label="文章详情："></el-form-item>
           <el-form-item prop="content" labelWidth="0">
             <tinymce :height="300" v-model="dataForm.content"></tinymce>
-            <!--<div v-text="dataForm.content"></div>-->
           </el-form-item>
 
           <el-form-item>
@@ -159,7 +159,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="sort_index" label="排序权重" width="120" sortable="custom"></el-table-column>
+        <el-table-column prop="sort_index" label="排序顺序" width="120" sortable="custom"></el-table-column>
         <el-table-column prop="price" label="现单价" width="150">
           <template slot-scope="scope">
             <p>
@@ -218,7 +218,8 @@ import {
   getInfo,
   update,
   deletes,
-  update_isOpen
+  update_isOpen,
+  uploadImg
 } from "@/api/article";
 import { getClassifyLists } from "@/api/classify";
 import Tinymce from "@/components/Tinymce";
@@ -331,6 +332,7 @@ export default {
     };
   },
   created() {
+
     //获取表格数据
     this.getTableLists();
 
@@ -339,45 +341,16 @@ export default {
   },
   methods: {
     //上传多张图片
-    //覆盖默认的上传行为，可以自定义上传的实现（本地）
-    submitUpload(file, fileList) {
-      //console.log(file);
-    },
-    //文件上传成功（服务器）
-    handleSuccess(res, file, fileList) {
-      //console.log(file);
-    },
-    //点击已上传的文件链接
-    handlePictureCardPreview(file) {
-      //console.log(file);
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    //文件超出个数限制时的钩子
+    handleExceed() {
+      this.$message.warning({
+        message: "你最多只能上传5张图片",
+        center: true
+      });
     },
     //上传文件之前的钩子，判断图片是否符合标准
     handleBeforeUpload(file) {
       //console.log(file);
-
-      //把图片转化为base，来获取图片的宽度和高度
-      /*let windowURL = window.URL || window.webkitUrl;
-      let imgUrl = windowURL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgUrl;
-      img.onload = () => {
-        console.log(img.height);
-        if(img.width/img.height !== 2){
-          this.$confirm('图片尺寸的宽高比例不符合2:1规则，可能会出现变形的情况','提示',{
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-
-
-
-          }).catch(() => {
-            return false;
-          });
-        }
-      };*/
 
       if (!/jpg|jpeg|png|gif/.test(file.type)) {
         this.$message.warning({
@@ -395,19 +368,24 @@ export default {
         return false;
       }
       return true;
-
-
     },
-    //文件超出个数限制时的钩子
-    handleExceed() {
-      this.$message.warning({
-        message: "你最多只能上传5张图片图片不能大于3M",
-        center: true
-      });
+    //覆盖默认的上传行为，可以自定义上传的实现（本地）
+    submitUpload(file, fileList) {
+      //console.log(file);
     },
-    //文件状态改变时的钩子，添加文件，上传成功和上传失败时都会被调用
+    //文件上传成功（服务器）
+    handleSuccess(res, file, fileList) {
+      //console.log(file);
+    },
+    //点击已上传的文件链接
+    handlePictureCardPreview(file) {
+      //console.log(file);
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    //文件状态改变时的钩子，添加文件，上传成功和上传失败时都会被调用（移除不会触发）
     handleChange(file, fileList) {
-      //console.log(fileList);
+      console.log(fileList);
       this.imgList = fileList;
     },
     //移除文件
@@ -510,6 +488,7 @@ export default {
     addRow() {
       this.visible = true;
       this.operate = 0;
+      this.dataForm.content = '';
     },
     //点击修改数据
     editRow(id) {
@@ -596,7 +575,7 @@ export default {
               formData.append("uid", params.uid);
               formData.append('phone', params.phone);
               formData.append('is_open', params.is_open);
-              formData.append('sort_index', params.sort_index ? null : params.sort_index);
+              formData.append('sort_index', params.sort_index === undefined ? null : params.sort_index);
               formData.append("price", params.price === undefined ? null : params.price );
               formData.append("unit_square", params.unit_square === undefined ? null : params.unit_square );
               formData.append("unit_square_x", params.unit_square_x);
@@ -616,6 +595,16 @@ export default {
                 }
               });
               //console.log(formData.getAll("files"));
+
+              //单独把富文本的图片上传到服务器
+              /*let imgList = this.$store.getters.imgList;
+              if(imgList){
+                uploadImg(imgList).then(res => {
+                  if(res.error_code === 0){
+
+                  }
+                });
+              }*/
 
               update(formData).then(res => {
                 if (res.error_code === 0) {
@@ -685,6 +674,12 @@ export default {
           content: ""
         };
         this.visible = false;
+        this.$router.push({path: '/'});
+        setTimeout(() => {
+          this.$router.push({path: '/article'});
+        },100);
+
+
       }, 100);
     },
     /*----------------------分页--------------------*/

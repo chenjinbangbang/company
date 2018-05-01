@@ -3,9 +3,22 @@
     <el-button icon='upload' :style="{background:color,borderColor:color}" @click=" dialogVisible=true" type="primary">上传图片
     </el-button>
     <el-dialog :visible.sync="dialogVisible" :modal="false">
-      <el-upload class="editor-slide-upload" action="https://httpbin.org/post" :multiple="true" :file-list="fileList" :show-file-list="true"
-        list-type="picture-card" :on-remove="handleRemove" :on-success="handleSuccess" :before-upload="beforeUpload">
+      <el-upload
+        class="editor-slide-upload"
+        action=""
+        list-type="picture-card"
+        :multiple="true"
+        :limit="50"
+        :file-list="imgList"
+        :on-exceed="handleExceed"
+        :before-upload="beforeUpload"
+        :http-request="submitUpload"
+        :on-change="handleChange"
+        :on-remove="handleRemove"
+        :on-success="handleSuccess"
+        >
         <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="upload_tip">最多上传50张图片，只能上传jpg/jpeg/png/gif格式的图片，不超过3M且不少于10kb</div>
       </el-upload>
       <el-button @click="dialogVisible = false">取 消</el-button>
       <el-button type="primary" @click="handleSubmit">确 定</el-button>
@@ -27,60 +40,71 @@ export default {
     return {
       dialogVisible: false,
       listObj: {},
-      fileList: []
+      imgList: []
     }
   },
   methods: {
-    checkAllSuccess() {
-      return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
+    //文件超出个数限制时的钩子
+    handleExceed() {
+      this.$message.warning({
+        message: "你最多只能上传50张图片",
+        center: true
+      });
     },
-    handleSubmit() {
-      const arr = Object.keys(this.listObj).map(v => this.listObj[v])
-      if (!this.checkAllSuccess()) {
-        this.$message('请等待所有图片上传成功 或 出现了网络问题，请刷新页面重新上传！')
-        return
-      }
-      console.log(arr)
-      this.$emit('successCBK', arr)
-      this.listObj = {}
-      this.fileList = []
-      this.dialogVisible = false
-    },
-    handleSuccess(response, file) {
-      const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
-          this.listObj[objKeyArr[i]].hasSuccess = true
-          return
-        }
-      }
-    },
-    handleRemove(file) {
-      const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          delete this.listObj[objKeyArr[i]]
-          return
-        }
-      }
-    },
+    //上传文件之前的钩子，判断图片是否符合标准
     beforeUpload(file) {
-      const _self = this
-      const _URL = window.URL || window.webkitURL
-      const fileName = file.uid
-      this.listObj[fileName] = {}
+
+      if (!/jpg|jpeg|png|gif/.test(file.type)) {
+        this.$message.warning({
+          message: "只能上传jpg/jpeg/png/gif格式的图片",
+          center: true
+        });
+        return false;
+      }
+      if (file.size / 1024 / 1024 > 3) {
+        this.$message.warning({ message: "图片不能大于3M", center: true });
+        return false;
+      }
+      if(file.size / 1024 < 10){
+        this.$message.warning({ message: "图片不能少于10kb", center: true });
+        return false;
+      }
+
+      const URL = window.URL || window.webkitURL;
       return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = _URL.createObjectURL(file)
-        img.onload = function() {
-          _self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
-        }
-        resolve(true)
-      })
-    }
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+          //this.imgList.push(img.src);
+          //console.log(this.imgList);
+        };
+        resolve(true);
+      });
+    },
+    //覆盖默认的上传行为，可以自定义上传的实现（本地）
+    submitUpload(file) {
+      //console.log(file);
+    },
+    //文件上传成功（服务器）
+    handleSuccess(response, file) {
+
+    },
+//文件状态改变时的钩子，添加文件，上传成功和上传失败时都会被调用（移除不会触发）
+    handleChange(file, fileList) {
+      //console.log(fileList);
+      this.imgList = fileList;
+    },
+    handleRemove(file,fileList) {
+      this.imgList = fileList;
+    },
+    //提交
+    handleSubmit() {
+      //console.log(this.imgList);
+      this.$emit('successCBK', this.imgList);
+      this.dialogVisible = false;
+      this.imgList = [];  //图片文件初始化
+    },
+
   }
 }
 </script>
