@@ -2,7 +2,7 @@
   <div class="articles">
 
     <div class="dataForm">
-      <el-dialog :title="operate === 0 ? '添加文章' : '修改文章'" :visible.sync="visible" :closeOnClickModal="false" :beforeClose="handleClose">
+      <el-dialog :title="operate === 0 ? '添加文章' : '更新文章'" :visible.sync="visible" :closeOnClickModal="false" :beforeClose="handleClose">
         <el-form :model="dataForm" ref="dataForm" labelWidth="150px" :rules="rules">
           <el-form-item label="编号：" prop="id" v-if="operate !== 0">
             <span>{{dataForm['id']}}</span>
@@ -268,8 +268,8 @@ export default {
       },
       iconFile: "", //上传的文件
       visible: false, //表单显示与隐藏
-      editId: 0, //点击修改的是哪个id
-      operate: 0, //判断用户是添加（0）还是修改数据（1）
+      editId: 0, //点击更新的是哪个id
+      operate: 0, //判断用户是添加（0）还是更新数据（1）
       loading: true, //加载数据
       //查询分页
       total: 0, //总数
@@ -385,7 +385,7 @@ export default {
     },
     //文件状态改变时的钩子，添加文件，上传成功和上传失败时都会被调用（移除不会触发）
     handleChange(file, fileList) {
-      console.log(fileList);
+      //console.log(fileList);
       this.imgList = fileList;
     },
     //移除文件
@@ -395,7 +395,7 @@ export default {
     },
     //文件上传失败
     handleError(err, file, fileList) {
-      console.log(`图片上传失败：${err}`);
+      this.$message.warning({ message: `图片上传失败：${err}`, center: true });
     },
 
     /*----------------------表单数据与操作--------------------*/
@@ -490,7 +490,7 @@ export default {
       this.operate = 0;
       this.dataForm.content = '';
     },
-    //点击修改数据
+    //点击更新数据
     editRow(id) {
       this.editId = id;
       getInfo({ id }).then(res => {
@@ -559,15 +559,6 @@ export default {
               //console.log(this.dataForm.images);
               //console.log(this.imgList);
 
-              //处理upload组件的文件列表fileList
-              // let imgArray = [];
-              // this.imgList.forEach(item => {
-              //   if (item.status === "status") {
-              //   }
-              //   imgArray.push(item.raw);
-              // });
-              // params.images = imgArray;
-
               //处理图片
               let formData = new FormData();
               formData.append("id", params.id);
@@ -595,16 +586,6 @@ export default {
                 }
               });
               //console.log(formData.getAll("files"));
-
-              //单独把富文本的图片上传到服务器
-              /*let imgList = this.$store.getters.imgList;
-              if(imgList){
-                uploadImg(imgList).then(res => {
-                  if(res.error_code === 0){
-
-                  }
-                });
-              }*/
 
               update(formData).then(res => {
                 if (res.error_code === 0) {
@@ -652,7 +633,7 @@ export default {
     //重置并退出
     resetForm() {
       setTimeout(() => {
-        //解决快速点击2次时，表单已重置修改信息为空的问题
+        //解决快速点击2次时，表单已重置更新信息为空的问题
         //两个一起解决重置问题
         this.$refs.dataForm.resetFields();
         this.dataForm = {

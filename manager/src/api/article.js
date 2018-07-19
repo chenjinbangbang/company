@@ -62,7 +62,7 @@ export function getInfo(data) {
   });
 }
 
-//修改文章
+//更新文章
 export function update(data) {
 
   return request({

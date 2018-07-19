@@ -148,7 +148,7 @@ router.get('/list', async (req, res) => {
   res.json(result);
 });
 
-//修改开启功能
+//更新开启功能
 router.post('/update_isOpen', (req, res) => {
   let params = req.body;
 
@@ -156,7 +156,7 @@ router.post('/update_isOpen', (req, res) => {
   console.log(sql);
   connection.query(sql, (err, result) => {
     if (err) {
-      console.log(`修改文章id为：${params.id}的开启功能失败：${err}`);
+      console.log(`更新文章id为：${params.id}的开启功能失败：${err}`);
       return;
     }
 
@@ -249,7 +249,7 @@ router.post('/update', upload.array('files', 5), (req, res) => {
     }
   }
 
-  //处理新增或修改的图片
+  //处理新增或更新的图片
   req.files.forEach((item, index) => {
     imgVal.push(`/static/images/${item.filename}`);
   });
